@@ -37,13 +37,23 @@ const Login = () => {
         });
         // Редирект на меню
         navigate("/menu");
+      } else if (data.error) {
+        setToast(data.error);
       } else {
         setToast("Неверный пароль");
       }
     } catch (err) {
       setLoading(false);
-      console.error(err);
-      setToast("Ошибка сервера");
+      console.error("Login error:", err);
+      
+      // Проверяем статус ошибки
+      if (err.response && err.response.status === 401) {
+        setToast("Неверный пароль");
+      } else if (err.response && err.response.data && err.response.data.error) {
+        setToast(err.response.data.error);
+      } else {
+        setToast("Ошибка сервера");
+      }
     }
   };
 
