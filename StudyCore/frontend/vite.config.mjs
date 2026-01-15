@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: "../backend/frontend/dist", // билд попадёт в backend
+    outDir: "dist", // билд в dist папку frontend
     emptyOutDir: true
   }
 });
