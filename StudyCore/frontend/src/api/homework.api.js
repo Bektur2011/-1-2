@@ -4,3 +4,6 @@ export const getHomework = () => axios.get("/homework");
 
 export const addHomework = (title, description) =>
   axios.post("/homework", { title, description });
+
+export const deleteHomework = (id) =>
+  axios.delete(`/homework/${id}`);

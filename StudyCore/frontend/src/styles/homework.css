@@ -122,6 +122,29 @@
   box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
 }
 
+.btn-delete {
+  background: rgba(255, 65, 65, 0.3);
+  color: #fff;
+  border: 2px solid rgba(255, 65, 65, 0.5);
+  padding: 0.5rem 0.8rem;
+  border-radius: 6px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete:hover {
+  background: rgba(255, 65, 65, 0.6);
+  border-color: rgba(255, 65, 65, 0.9);
+  transform: scale(1.1);
+}
+
 .homework-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -139,6 +162,10 @@
   animation: fadeInUp 0.8s ease-out;
   position: relative;
   overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
 }
 
 .homework-item::before {

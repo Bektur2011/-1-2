@@ -77,9 +77,21 @@ def get_homework():
 def add_homework():
     data = request.json
     homework = read_homework()
+    
+    # Генерируем ID
+    new_id = max([h.get("id", 0) for h in homework], default=0) + 1
+    data["id"] = new_id
+    
     homework.append(data)
     write_homework(homework)
     return jsonify(data), 201
+
+@app.route("/homework/<int:hw_id>", methods=["DELETE"])
+def delete_homework(hw_id):
+    homework = read_homework()
+    homework = [h for h in homework if h.get("id") != hw_id]
+    write_homework(homework)
+    return jsonify({"message": "Задание удалено"}), 200
 
 # --- Раздача фронтенда ---
 @app.route("/", defaults={"path": ""})

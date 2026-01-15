@@ -1,28 +1,69 @@
 import { useEffect, useState } from "react";
+import { useAuth } from "../store/authStore";
+import { getHomework, addHomework, deleteHomework } from "../api/homework.api";
 import "../styles/homework.css";
 
 export default function Homework() {
-  const [list, setList] = useState([
-    { id: 1, title: "Математика", description: "Решить задачи на алгебру" },
-    { id: 2, title: "Русский язык", description: "Написать сочинение" },
-  ]);
+  const user = useAuth((state) => state.user);
+  const [list, setList] = useState([]);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
+  const [loading, setLoading] = useState(true);
 
-  const add = () => {
+  // Загружаем ДЗ с бэкенда при открытии страницы
+  useEffect(() => {
+    loadHomework();
+  }, []);
+
+  const loadHomework = async () => {
+    try {
+      const response = await getHomework();
+      setList(response.data);
+    } catch (err) {
+      console.error("Ошибка загрузки ДЗ:", err);
+      setList([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const add = async () => {
     if (!title || !desc) {
       alert("Заполните все поля!");
       return;
     }
-    const newHomework = {
-      id: list.length + 1,
-      title: title,
-      description: desc,
-    };
-    setList([...list, newHomework]);
-    setTitle("");
-    setDesc("");
+    
+    try {
+      const response = await addHomework(title, desc);
+      setList([...list, response.data]);
+      setTitle("");
+      setDesc("");
+    } catch (err) {
+      console.error("Ошибка при добавлении ДЗ:", err);
+      alert("Ошибка при добавлении задания");
+    }
   };
+
+  const remove = async (id) => {
+    if (!window.confirm("Вы уверены, что хотите удалить это задание?")) {
+      return;
+    }
+
+    try {
+      await deleteHomework(id);
+      setList(list.filter((h) => h.id !== id));
+    } catch (err) {
+      console.error("Ошибка при удалении ДЗ:", err);
+      alert("Ошибка при удалении задания");
+    }
+  };
+
+  // Проверяем, может ли пользователь добавлять ДЗ (модератор или админ)
+  const canAddHomework = user && (user.role === "Moderator" || user.role === "Admin");
+
+  if (loading) {
+    return <div className="homework-page"><p>Загрузка...</p></div>;
+  }
 
   return (
     <div className="homework-page">
@@ -31,31 +72,34 @@ export default function Homework() {
           <h2>📚 Домашние задания</h2>
         </div>
 
-        <div className="homework-form">
-          <div className="form-row">
-            <div className="form-group">
-              <label>Название задания</label>
-              <input
-                type="text"
-                placeholder="Введите название"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
+        {/* Форма добавления - видна только для модераторов и админов */}
+        {canAddHomework && (
+          <div className="homework-form">
+            <div className="form-row">
+              <div className="form-group">
+                <label>Название задания</label>
+                <input
+                  type="text"
+                  placeholder="Введите название"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label>Описание</label>
+                <input
+                  type="text"
+                  placeholder="Введите описание"
+                  value={desc}
+                  onChange={(e) => setDesc(e.target.value)}
+                />
+              </div>
             </div>
-            <div className="form-group">
-              <label>Описание</label>
-              <input
-                type="text"
-                placeholder="Введите описание"
-                value={desc}
-                onChange={(e) => setDesc(e.target.value)}
-              />
-            </div>
+            <button className="btn-add" onClick={add}>
+              ➕ Добавить задание
+            </button>
           </div>
-          <button className="btn-add" onClick={add}>
-            ➕ Добавить задание
-          </button>
-        </div>
+        )}
 
         {list.length === 0 ? (
           <div className="empty-message">Заданий пока нет</div>
@@ -67,6 +111,12 @@ export default function Homework() {
                   <h3>{h.title}</h3>
                   <p>{h.description}</p>
                 </div>
+                {/* Кнопка удаления видна только для модераторов и админов */}
+                {canAddHomework && (
+                  <button className="btn-delete" onClick={() => remove(h.id)} title="Удалить задание">
+                    🗑️
+                  </button>
+                )}
               </div>
             ))}
           </div>
