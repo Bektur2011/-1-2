@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../store/authStore";
+import axios from "../api/axios";
 import "../styles/journal.css";
 
 const Journal = () => {
@@ -7,13 +8,13 @@ const Journal = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    // Загружаем пользователей с бэкенда
-    fetch("http://127.0.0.1:5000/users")
-      .then((res) => res.json())
-      .then((data) => setUsers(data))
+    // Загружаем пользователей с бэкенда через axios (использует базовый URL из api/axios.js)
+    axios
+      .get("/users")
+      .then((res) => setUsers(res.data))
       .catch((err) => {
         console.error("Ошибка загрузки:", err);
-        // Используем тестовые данные
+        // Используем тестовые данные на случай ошибки
         setUsers([
           { id: 1, name: "Мырзабек", role: "Student", gender: "Male", login: "bb34_01" },
           { id: 2, name: "Алинур", role: "Student", gender: "Male", login: "bb34_02" },
