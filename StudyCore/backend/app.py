@@ -6,7 +6,13 @@ from flask_cors import CORS
 # Путь к frontend dist
 FRONTEND_DIST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../frontend/dist")
 
-app = Flask(__name__, static_folder=FRONTEND_DIST)
+# Проверка наличия папки dist
+if not os.path.exists(FRONTEND_DIST):
+    print(f"WARNING: dist folder not found at {FRONTEND_DIST}")
+    print(f"Current directory: {os.getcwd()}")
+    print(f"Available files: {os.listdir(os.path.dirname(os.path.abspath(__file__)))}")
+
+app = Flask(__name__, static_folder=FRONTEND_DIST, static_url_path='')
 CORS(app)  # разрешаем кросс-доменные запросы
 
 # Путь к данным
@@ -74,10 +80,15 @@ def add_homework():
 @app.route("/<path:path>")
 def serve_frontend(path):
     # если путь существует в dist, отдаем файл
-    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+    file_path = os.path.join(app.static_folder, path)
+    if path != "" and os.path.exists(file_path) and os.path.isfile(file_path):
         return send_from_directory(app.static_folder, path)
     # иначе отдаём index.html (SPA)
-    return send_from_directory(app.static_folder, "index.html")
+    index_path = os.path.join(app.static_folder, "index.html")
+    if os.path.exists(index_path):
+        return send_from_directory(app.static_folder, "index.html")
+    # если нет index.html, возвращаем ошибку
+    return jsonify({"error": "Frontend not built yet"}), 500
 
 # --- Запуск ---
 if __name__ == "__main__":
