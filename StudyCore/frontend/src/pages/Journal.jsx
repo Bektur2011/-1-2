@@ -1,0 +1,115 @@
+import React, { useEffect, useState } from "react";
+import { useAuth } from "../store/authStore";
+import "../styles/journal.css";
+
+const Journal = () => {
+  const user = useAuth((state) => state.user);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    // Загружаем пользователей с бэкенда
+    fetch("http://127.0.0.1:5000/users")
+      .then((res) => res.json())
+      .then((data) => setUsers(data))
+      .catch((err) => {
+        console.error("Ошибка загрузки:", err);
+        // Используем тестовые данные
+        setUsers([
+          { id: 1, name: "Мырзабек", role: "Student", gender: "Male", login: "bb34_01" },
+          { id: 2, name: "Алинур", role: "Student", gender: "Male", login: "bb34_02" },
+          { id: 14, name: "Бектур", role: "Moderator", gender: "Male", login: "bb34_14" },
+          { id: 15, name: "Даткайым", role: "Admin", gender: "Female", login: "bb34_15" },
+        ]);
+      });
+  }, []);
+
+  const stats = {
+    total: users.length,
+    students: users.filter((u) => u.role === "Student").length,
+    moderators: users.filter((u) => u.role === "Moderator").length,
+    admins: users.filter((u) => u.role === "Admin").length,
+  };
+
+  const getRoleBadgeClass = (role) => {
+    switch (role) {
+      case "Admin":
+        return "role-admin";
+      case "Moderator":
+        return "role-moderator";
+      default:
+        return "role-student";
+    }
+  };
+
+  const getGenderIcon = (gender) => {
+    return gender === "Female" ? "👩" : "👨";
+  };
+
+  return (
+    <div className="journal-page">
+      <div className="journal-container">
+        <div className="journal-header">
+          <h2>📖 Журнал учеников</h2>
+          {user && <p>Добро пожаловать, {user.role} {user.name}!</p>}
+        </div>
+
+        <div className="stats-row">
+          <div className="stat-card">
+            <div className="stat-card-number">{stats.total}</div>
+            <div className="stat-card-label">Всего пользователей</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-card-number">{stats.students}</div>
+            <div className="stat-card-label">Студентов</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-card-number">{stats.moderators}</div>
+            <div className="stat-card-label">Модераторов</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-card-number">{stats.admins}</div>
+            <div className="stat-card-label">Администраторов</div>
+          </div>
+        </div>
+
+        {users.length === 0 ? (
+          <div className="empty-message">Пользователей пока нет</div>
+        ) : (
+          <div className="journal-table-wrapper">
+            <table className="journal-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Логин</th>
+                  <th>Имя</th>
+                  <th>Роль</th>
+                  <th>Пол</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((u, index) => (
+                  <tr key={u.id} style={{ animationDelay: `${index * 0.05}s` }}>
+                    <td>{u.id}</td>
+                    <td>{u.login}</td>
+                    <td>
+                      <span className="gender-icon">{getGenderIcon(u.gender)}</span>
+                      {u.name}
+                    </td>
+                    <td>
+                      <span className={`role-badge ${getRoleBadgeClass(u.role)}`}>
+                        {u.role}
+                      </span>
+                    </td>
+                    <td>{u.gender === "Female" ? "Женский" : "Мужской"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Journal;

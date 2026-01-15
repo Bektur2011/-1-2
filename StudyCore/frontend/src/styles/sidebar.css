@@ -1,0 +1,87 @@
+/* Вставляешь сюда: frontend/src/styles/sidebar.css */
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 220px;
+  height: 100%;
+  background: linear-gradient(180deg, #6a11cb 0%, #2575fc 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+  z-index: 1000;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+}
+
+.sidebar.closed {
+  width: 60px;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.sidebar-header h2 {
+  font-size: 1.2rem;
+  margin: 0;
+  white-space: nowrap;
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+
+.sidebar.closed .sidebar-header h2 {
+  opacity: 0;
+}
+
+.toggle-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.sidebar-nav {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-link {
+  padding: 0.8rem 1rem;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  margin: 0.2rem 0;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  background: rgba(255,255,255,0.2);
+  transform: translateX(5px);
+}
+
+.sidebar.closed .nav-link {
+  text-align: center;
+  padding: 0.8rem 0;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: -220px;
+    width: 220px;
+    transition: left 0.3s ease;
+  }
+  .sidebar.open {
+    left: 0;
+  }
+}
+
