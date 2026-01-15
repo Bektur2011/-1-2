@@ -2,7 +2,7 @@
   {
     "name": "StudyCore Backend",
     "description": "Flask backend API for StudyCore",
-    "buildCommand": "cd StudyCore/backend && pip install -r requirements.txt",
+    "buildCommand": "cd StudyCore/frontend && npm install && npm run build && cd ../backend && pip install -r requirements.txt",
     "startCommand": "cd StudyCore/backend && python app.py"
   }
 ]
