@@ -40,19 +40,25 @@ def write_homework(data):
 def login():
     data = request.json
     password = data.get("password")
+    
+    print(f"Login attempt with password: '{password}'")  # для отладки
 
     users = read_users()
     user = next((u for u in users if u["password"] == password), None)
 
     if user:
         gender_prefix = "Ученица" if user.get("gender") == "Female" else "Ученик"
-        return jsonify({
+        response = {
             "id": user["id"],
             "name": user["name"],
             "role": user["role"],
             "gender": user["gender"],
             "welcome": f"Добро пожаловать {gender_prefix} {user['name']}"
-        })
+        }
+        print(f"Login successful for user: {user['name']}")
+        return jsonify(response)
+    
+    print(f"Login failed: password not found")
     return jsonify({"error": "Неверный пароль"}), 401
 
 # --- API для получения всех пользователей ---

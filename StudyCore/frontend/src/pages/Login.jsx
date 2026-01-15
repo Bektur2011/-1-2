@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../store/authStore";
+import { loginRequest } from "../api/auth.api";
 import "../styles/global.css";
 import "../styles/animations.css";
 
@@ -12,7 +13,7 @@ const Login = () => {
   const navigate = useNavigate();
   const login = useAuth((state) => state.login);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!password) {
       setToast("Введите пароль!");
       return;
@@ -20,29 +21,30 @@ const Login = () => {
 
     setLoading(true);
 
-    fetch("http://127.0.0.1:5000/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password: password.trim() }), // отправляем только пароль
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setLoading(false);
+    try {
+      const response = await loginRequest(password.trim());
+      const data = response.data;
+      
+      setLoading(false);
 
-        if (data.success) {
-          // Сохраняем пользователя в store
-          login({ name: data.name, role: data.role });
-          // Редирект на меню
-          navigate("/menu");
-        } else {
-          setToast("Неверный пароль");
-        }
-      })
-      .catch((err) => {
-        setLoading(false);
-        console.error(err);
-        setToast("Ошибка сервера");
-      });
+      if (data.id) {
+        // Сохраняем пользователя в store
+        login({ 
+          id: data.id,
+          name: data.name, 
+          role: data.role,
+          gender: data.gender
+        });
+        // Редирект на меню
+        navigate("/menu");
+      } else {
+        setToast("Неверный пароль");
+      }
+    } catch (err) {
+      setLoading(false);
+      console.error(err);
+      setToast("Ошибка сервера");
+    }
   };
 
   return (
@@ -53,6 +55,7 @@ const Login = () => {
         placeholder="Введите пароль"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        onKeyPress={(e) => e.key === "Enter" && handleLogin()}
       />
       <button onClick={handleLogin}>{loading ? "Вход..." : "Войти"}</button>
 
@@ -68,3 +71,4 @@ const Login = () => {
 };
 
 export default Login;
+
