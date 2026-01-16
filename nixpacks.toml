@@ -1,0 +1,8 @@
+[phases.build]
+cmds = ["./build.sh"]
+
+[phases.setup]
+nixPkgs = ["...", "nodejs", "npm"]
+
+[start]
+cmd = "python app.py"
