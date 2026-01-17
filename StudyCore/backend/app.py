@@ -1,7 +1,11 @@
 import os
-import json
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
+from supabase import create_client, Client
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Путь к frontend dist (build.sh копирует в корень проекта)
 FRONTEND_DIST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../dist")
@@ -9,47 +13,25 @@ FRONTEND_DIST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../
 app = Flask(__name__, static_folder=FRONTEND_DIST, static_url_path='')
 CORS(app)  # разрешаем кросс-доменные запросы
 
-# Путь к данным
-USERS_FILE = os.path.join(os.path.dirname(__file__), "data/users.json")
-HOMEWORK_FILE = os.path.join(os.path.dirname(__file__), "data/homework.json")
-
-# --- Helper функции ---
-def read_users():
-    try:
-        with open(USERS_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        print(f"ERROR: Users file not found at {USERS_FILE}")
-        return []
-    except Exception as e:
-        print(f"ERROR reading users file: {e}")
-        return []
-
-def read_homework():
-    if not os.path.exists(HOMEWORK_FILE):
-        with open(HOMEWORK_FILE, "w", encoding="utf-8") as f:
-            json.dump([], f)
-    with open(HOMEWORK_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-def write_homework(data):
-    with open(HOMEWORK_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+# Supabase setup
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # --- API для логина по паролю ---
 @app.route("/api/login", methods=["POST"])
 def login():
     data = request.json
     password = data.get("password")
-    
+
     print(f"Login attempt with password: '{password}'")  # для отладки
 
-    users = read_users()
-    user = next((u for u in users if u["password"] == password), None)
+    response = supabase.table('users').select('*').eq('password', password).execute()
+    user = response.data[0] if response.data else None
 
     if user:
         gender_prefix = "Ученица" if user.get("gender") == "Female" else "Ученик"
-        response = {
+        response_data = {
             "id": user["id"],
             "name": user["name"],
             "role": user["role"],
@@ -57,41 +39,32 @@ def login():
             "welcome": f"Добро пожаловать {gender_prefix} {user['name']}"
         }
         print(f"Login successful for user: {user['name']}")
-        return jsonify(response)
-    
+        return jsonify(response_data)
+
     print(f"Login failed: password not found")
     return jsonify({"error": "Неверный пароль"}), 401
 
 # --- API для получения всех пользователей ---
 @app.route("/api/users", methods=["GET"])
 def get_users():
-    users = read_users()
-    return jsonify(users)
+    response = supabase.table('users').select('*').execute()
+    return jsonify(response.data)
 
 # --- API для домашнего задания ---
 @app.route("/api/homework", methods=["GET"])
 def get_homework():
-    homework = read_homework()
-    return jsonify(homework)
+    response = supabase.table('homework').select('*').execute()
+    return jsonify(response.data)
 
 @app.route("/api/homework", methods=["POST"])
 def add_homework():
     data = request.json
-    homework = read_homework()
-
-    # Генерируем ID
-    new_id = max([h.get("id", 0) for h in homework], default=0) + 1
-    data["id"] = new_id
-
-    homework.append(data)
-    write_homework(homework)
-    return jsonify(data), 201
+    response = supabase.table('homework').insert(data).execute()
+    return jsonify(response.data[0]), 201
 
 @app.route("/api/homework/<int:hw_id>", methods=["DELETE"])
 def delete_homework(hw_id):
-    homework = read_homework()
-    homework = [h for h in homework if h.get("id") != hw_id]
-    write_homework(homework)
+    supabase.table('homework').delete().eq('id', hw_id).execute()
     return jsonify({"message": "Задание удалено"}), 200
 
 # --- Раздача фронтенда ---
