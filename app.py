@@ -104,11 +104,11 @@ def delete_homework(hw_id):
     return jsonify({"message": "Задание удалено"}), 200
 
 # --- Раздача фронтенда ---
+@app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
 def serve_frontend(path):
     # если путь существует в dist, отдаем файл
-    file_path = os.path.join(FRONTEND_DIST, path)
-    if os.path.exists(file_path) and os.path.isfile(file_path):
+    if path and os.path.exists(os.path.join(FRONTEND_DIST, path)) and os.path.isfile(os.path.join(FRONTEND_DIST, path)):
         return send_from_directory(FRONTEND_DIST, path)
 
     # для всех остальных маршрутов отдаём index.html (SPA)
@@ -117,13 +117,6 @@ def serve_frontend(path):
         return send_from_directory(FRONTEND_DIST, "index.html")
 
     # если нет index.html, возвращаем ошибку
-    return jsonify({"error": "Frontend not built yet"}), 500
-
-@app.route("/")
-def serve_root():
-    index_path = os.path.join(FRONTEND_DIST, "index.html")
-    if os.path.exists(index_path):
-        return send_from_directory(FRONTEND_DIST, "index.html")
     return jsonify({"error": "Frontend not built yet"}), 500
 
 # --- Запуск ---

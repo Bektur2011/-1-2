@@ -3,8 +3,8 @@ import json
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 
-# Путь к frontend dist
-FRONTEND_DIST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../frontend/dist")
+# Путь к frontend dist (build.sh копирует в корень проекта)
+FRONTEND_DIST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../dist")
 
 app = Flask(__name__, static_folder=FRONTEND_DIST, static_url_path='')
 CORS(app)  # разрешаем кросс-доменные запросы
@@ -15,8 +15,15 @@ HOMEWORK_FILE = os.path.join(os.path.dirname(__file__), "data/homework.json")
 
 # --- Helper функции ---
 def read_users():
-    with open(USERS_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+    try:
+        with open(USERS_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"ERROR: Users file not found at {USERS_FILE}")
+        return []
+    except Exception as e:
+        print(f"ERROR reading users file: {e}")
+        return []
 
 def read_homework():
     if not os.path.exists(HOMEWORK_FILE):

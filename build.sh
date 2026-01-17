@@ -35,4 +35,3 @@ ls -la dist/
 echo "=== Installing backend dependencies ==="
 pip install -r StudyCore/backend/requirements.txt
 
-echo "=== Build complete ==="

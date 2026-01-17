@@ -13,14 +13,8 @@ const Journal = () => {
       .get("/users")
       .then((res) => setUsers(res.data))
       .catch((err) => {
-        console.error("Ошибка загрузки:", err);
-        // Используем тестовые данные на случай ошибки
-        setUsers([
-          { id: 1, name: "Мырзабек", role: "Student", gender: "Male", login: "bb34_01" },
-          { id: 2, name: "Алинур", role: "Student", gender: "Male", login: "bb34_02" },
-          { id: 14, name: "Бектур", role: "Moderator", gender: "Male", login: "bb34_14" },
-          { id: 15, name: "Даткайым", role: "Admin", gender: "Female", login: "bb34_15" },
-        ]);
+        console.error("Ошибка загрузки пользователей:", err);
+        setUsers([]); // Оставляем пустой массив при ошибке
       });
   }, []);
 
