@@ -20,15 +20,26 @@ HOMEWORK_FILE = os.path.join(os.path.dirname(__file__), "StudyCore/backend/data/
 
 # --- Helper функции ---
 def read_users():
-    with open(USERS_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+    try:
+        with open(USERS_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"ERROR: Users file not found at {USERS_FILE}")
+        return []
+    except Exception as e:
+        print(f"ERROR reading users file: {e}")
+        return []
 
 def read_homework():
-    if not os.path.exists(HOMEWORK_FILE):
-        with open(HOMEWORK_FILE, "w", encoding="utf-8") as f:
-            json.dump([], f)
-    with open(HOMEWORK_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+    try:
+        if not os.path.exists(HOMEWORK_FILE):
+            with open(HOMEWORK_FILE, "w", encoding="utf-8") as f:
+                json.dump([], f)
+        with open(HOMEWORK_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"ERROR reading homework file: {e}")
+        return []
 
 def write_homework(data):
     with open(HOMEWORK_FILE, "w", encoding="utf-8") as f:
@@ -93,18 +104,26 @@ def delete_homework(hw_id):
     return jsonify({"message": "Задание удалено"}), 200
 
 # --- Раздача фронтенда ---
-@app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
 def serve_frontend(path):
     # если путь существует в dist, отдаем файл
     file_path = os.path.join(FRONTEND_DIST, path)
-    if path != "" and os.path.exists(file_path) and os.path.isfile(file_path):
+    if os.path.exists(file_path) and os.path.isfile(file_path):
         return send_from_directory(FRONTEND_DIST, path)
-    # иначе отдаём index.html (SPA)
+
+    # для всех остальных маршрутов отдаём index.html (SPA)
     index_path = os.path.join(FRONTEND_DIST, "index.html")
     if os.path.exists(index_path):
         return send_from_directory(FRONTEND_DIST, "index.html")
+
     # если нет index.html, возвращаем ошибку
+    return jsonify({"error": "Frontend not built yet"}), 500
+
+@app.route("/")
+def serve_root():
+    index_path = os.path.join(FRONTEND_DIST, "index.html")
+    if os.path.exists(index_path):
+        return send_from_directory(FRONTEND_DIST, "index.html")
     return jsonify({"error": "Frontend not built yet"}), 500
 
 # --- Запуск ---

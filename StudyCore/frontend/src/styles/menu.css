@@ -161,10 +161,65 @@ nav {
   content: '🤖';
 }
 
-/* Responsive */
+/* Mobile responsiveness for Android and iOS */
+
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+  .menu-nav a {
+    -webkit-tap-highlight-color: rgba(102, 126, 234, 0.1);
+  }
+
+  .menu-page {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Android Chrome specific fixes */
+@supports (-webkit-appearance: none) and (not (-webkit-touch-callout: none)) {
+  .menu-nav a {
+    -webkit-tap-highlight-color: rgba(102, 126, 234, 0.1);
+  }
+}
+
+/* Safe area for iPhone X and newer */
+@supports (padding: max(0px)) {
+  .menu-page {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-top: env(safe-area-inset-top);
+  }
+}
+
+/* Base mobile styles */
+@media (max-width: 1024px) {
+  .menu-nav a {
+    touch-action: manipulation;
+    min-height: 180px;
+  }
+
+  .menu-page {
+    padding: 1.5rem;
+  }
+}
+
 @media (max-width: 768px) {
+  .menu-page {
+    padding: 1rem;
+    align-items: flex-start;
+    padding-top: 10vh;
+  }
+
+  .menu-container {
+    padding: 0;
+  }
+
+  .menu-header {
+    margin-bottom: 2rem;
+  }
+
   .menu-header h2 {
     font-size: 2rem;
+    margin-bottom: 0.5rem;
   }
 
   .menu-header p {
@@ -180,10 +235,130 @@ nav {
     padding: 2rem 1.5rem;
     min-height: 150px;
     font-size: 1.1rem;
+    border-radius: 12px;
   }
 
   .menu-icon {
     font-size: 2rem;
+    margin-bottom: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-page {
+    padding: 0.5rem;
+    padding-top: 5vh;
+  }
+
+  .menu-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .menu-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .menu-header p {
+    font-size: 0.9rem;
+  }
+
+  .menu-nav {
+    gap: 1rem;
+  }
+
+  .menu-nav a {
+    padding: 1.5rem 1rem;
+    min-height: 120px;
+    font-size: 1rem;
+    border-radius: 10px;
+  }
+
+  .menu-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.6rem;
+  }
+}
+
+/* Very small screens (older phones) */
+@media (max-width: 360px) {
+  .menu-page {
+    padding: 0.25rem;
+    padding-top: 3vh;
+  }
+
+  .menu-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .menu-header p {
+    font-size: 0.85rem;
+  }
+
+  .menu-nav a {
+    padding: 1.2rem 0.8rem;
+    min-height: 100px;
+    font-size: 0.95rem;
+  }
+
+  .menu-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Landscape orientation for phones */
+@media (max-height: 500px) and (orientation: landscape) {
+  .menu-page {
+    padding-top: 2vh;
+    align-items: center;
+  }
+
+  .menu-container {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .menu-header {
+    margin-bottom: 1rem;
+  }
+
+  .menu-nav {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .menu-nav a {
+    padding: 1.5rem 1rem;
+    min-height: 100px;
+  }
+
+  .menu-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* High DPI displays (Retina, etc.) */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .menu-page::before {
+    background-size: 25px 25px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .menu-page {
+    background: linear-gradient(135deg, #2d1b69 0%, #11998e 100%);
+  }
+
+  .menu-nav a {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .menu-nav a:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
   }
 }
 

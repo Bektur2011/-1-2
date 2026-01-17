@@ -250,23 +250,80 @@
   }
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* Mobile responsiveness for Android and iOS */
+
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+  .homework-form input,
+  .homework-form textarea {
+    -webkit-appearance: none;
+    -webkit-border-radius: 8px;
+    border-radius: 8px;
+  }
+
+  .btn-add, .btn-delete {
+    -webkit-tap-highlight-color: rgba(102, 126, 234, 0.1);
+  }
+}
+
+/* Android Chrome specific fixes */
+@supports (-webkit-appearance: none) and (not (-webkit-touch-callout: none)) {
+  .homework-form input,
+  .homework-form textarea {
+    -webkit-appearance: none;
+    border-radius: 8px;
+  }
+
+  .btn-add, .btn-delete {
+    -webkit-tap-highlight-color: rgba(102, 126, 234, 0.1);
+  }
+}
+
+/* Safe area for iPhone X and newer */
+@supports (padding: max(0px)) {
+  .homework-page {
+    padding-left: max(2rem, env(safe-area-inset-left));
+    padding-right: max(2rem, env(safe-area-inset-right));
+  }
+}
+
+/* Base mobile styles */
+@media (max-width: 1024px) {
   .homework-page {
     padding: 2rem 1rem;
   }
 
+  .btn-add, .btn-delete {
+    touch-action: manipulation;
+    min-height: 44px; /* iOS touch target minimum */
+  }
+
+  .homework-form input,
+  .homework-form textarea {
+    font-size: 16px; /* Prevent zoom on iOS */
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 768px) {
+  .homework-page {
+    padding: 1.5rem 1rem;
+  }
+
   .homework-header h2 {
     font-size: 1.8rem;
+    margin-bottom: 2rem;
   }
 
   .homework-form {
     padding: 1.5rem;
+    margin-bottom: 2rem;
   }
 
   .form-row {
     grid-template-columns: 1fr;
     gap: 1rem;
+    margin-bottom: 1rem;
   }
 
   .homework-list {
@@ -276,9 +333,154 @@
 
   .homework-item {
     padding: 1.5rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
   }
 
   .homework-item h3 {
     font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .homework-item p {
+    line-height: 1.5;
+  }
+
+  .btn-delete {
+    align-self: flex-end;
+    min-width: 44px;
+    height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .homework-page {
+    padding: 1rem 0.5rem;
+  }
+
+  .homework-header h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .homework-form {
+    padding: 1.2rem;
+    margin-bottom: 1.5rem;
+    border-radius: 12px;
+  }
+
+  .form-row {
+    gap: 0.8rem;
+  }
+
+  .form-group label {
+    font-size: 0.9rem;
+  }
+
+  .homework-form input,
+  .homework-form textarea {
+    padding: 0.7rem;
+    font-size: 15px;
+    min-height: 40px;
+  }
+
+  .homework-list {
+    gap: 1rem;
+  }
+
+  .homework-item {
+    padding: 1.2rem;
+    border-radius: 10px;
+  }
+
+  .homework-item h3 {
+    font-size: 1rem;
+  }
+
+  .homework-item p {
+    font-size: 0.9rem;
+  }
+
+  .btn-delete {
+    min-width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .empty-message {
+    padding: 2rem 1rem;
+    font-size: 1rem;
+  }
+}
+
+/* Very small screens (older phones) */
+@media (max-width: 360px) {
+  .homework-page {
+    padding: 0.5rem 0.25rem;
+  }
+
+  .homework-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .homework-form {
+    padding: 1rem;
+  }
+
+  .homework-form input,
+  .homework-form textarea {
+    padding: 0.6rem;
+    font-size: 14px;
+    min-height: 36px;
+  }
+
+  .btn-add {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+  }
+
+  .homework-item {
+    padding: 1rem;
+  }
+
+  .btn-delete {
+    min-width: 36px;
+    height: 36px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Landscape orientation for phones */
+@media (max-height: 500px) and (orientation: landscape) {
+  .homework-page {
+    padding: 1rem 0.5rem;
+  }
+
+  .homework-header h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .homework-form {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .homework-list {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+
+  .homework-item {
+    padding: 1rem;
+    min-height: 120px;
+  }
+}
+
+/* High DPI displays (Retina, etc.) */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .homework-page::before {
+    background-size: 25px 25px;
   }
 }

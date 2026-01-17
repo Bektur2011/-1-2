@@ -139,53 +139,192 @@ a {
   z-index: 1;
 }
 
-/* Responsive */
+/* Mobile-first responsive design for Android and iOS */
+
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  input, textarea, select {
+    -webkit-appearance: none;
+    -webkit-border-radius: 12px;
+    border-radius: 12px;
+  }
+
+  input[type="password"] {
+    -webkit-text-security: disc;
+  }
+}
+
+/* Android Chrome specific fixes */
+@supports (-webkit-appearance: none) and (not (-webkit-touch-callout: none)) {
+  input, textarea, select {
+    -webkit-appearance: none;
+    border-radius: 12px;
+  }
+}
+
+/* Safe area for iPhone X and newer */
+@supports (padding: max(0px)) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  .login-page {
+    padding-left: max(2rem, env(safe-area-inset-left));
+    padding-right: max(2rem, env(safe-area-inset-right));
+  }
+}
+
+/* Base mobile styles */
 @media (max-width: 1024px) {
   body {
-    font-size: 15px;
+    font-size: 16px; /* Prevent zoom on iOS */
+    -webkit-text-size-adjust: 100%;
   }
 
   button {
     padding: 0.9rem 1.8rem;
     font-size: 0.95rem;
+    min-height: 44px; /* iOS touch target minimum */
+    touch-action: manipulation;
   }
 
   input, textarea, select {
     padding: 0.8rem 1.2rem;
-    font-size: 0.95rem;
+    font-size: 16px; /* Prevent zoom on iOS */
+    min-height: 44px; /* iOS touch target minimum */
   }
 }
 
 @media (max-width: 768px) {
   body {
-    font-size: 14px;
+    font-size: 15px;
   }
 
   button {
     padding: 0.8rem 1.5rem;
     font-size: 0.9rem;
+    min-height: 44px;
+    width: 100%;
+    max-width: 300px;
   }
 
   input, textarea, select {
     padding: 0.7rem 1rem;
-    font-size: 0.9rem;
+    font-size: 15px;
     margin-bottom: 1rem;
+    width: 100%;
+    max-width: 300px;
   }
 
   h2 {
     font-size: 1.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .login-page {
+    padding: 1rem;
+    min-height: 100vh;
+    justify-content: flex-start;
+    padding-top: 20vh;
   }
 }
 
 @media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+
   button {
-    padding: 0.7rem 1.2rem;
+    padding: 0.75rem 1.2rem;
     font-size: 0.85rem;
+    min-height: 44px;
     width: 100%;
+    max-width: 280px;
   }
 
   input, textarea, select {
     width: 100%;
+    max-width: 280px;
+    font-size: 14px;
+    min-height: 44px;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .login-page {
+    padding: 0.5rem;
+    padding-top: 15vh;
+  }
+}
+
+/* Very small screens (older phones) */
+@media (max-width: 360px) {
+  button {
+    padding: 0.7rem 1rem;
+    font-size: 0.8rem;
+    max-width: 250px;
+  }
+
+  input, textarea, select {
+    max-width: 250px;
+    padding: 0.6rem 0.8rem;
+  }
+
+  h2 {
+    font-size: 1.3rem;
+  }
+}
+
+/* Landscape orientation for phones */
+@media (max-height: 500px) and (orientation: landscape) {
+  .login-page {
+    padding-top: 5vh;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+  }
+
+  .login-page > * {
+    flex: 1;
+    max-width: 300px;
+  }
+
+  h2 {
+    margin-bottom: 1rem;
+  }
+}
+
+/* High DPI displays (Retina, etc.) */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  body {
+    background: linear-gradient(135deg, #2d1b69 0%, #11998e 100%);
+  }
+
+  input, textarea, select {
+    background: rgba(255, 255, 255, 0.9);
+    color: #000;
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: rgba(0, 0, 0, 0.6);
   }
 }
 
@@ -214,6 +353,4 @@ a {
     opacity: 1;
     transform: translateY(0);
   }
-}
-  animation: fadeIn 1s ease forwards;
 }
