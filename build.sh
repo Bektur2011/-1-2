@@ -1,8 +1,11 @@
 #!/bin/bash
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+echo "Script directory: $SCRIPT_DIR"
+
 echo "=== Building frontend ==="
-cd StudyCore/frontend
+cd "$SCRIPT_DIR/StudyCore/frontend"
 npm ci
 npm run build
 
@@ -15,7 +18,7 @@ fi
 echo "=== Contents of dist folder ==="
 ls -la dist/
 
-cd ../..
+cd "$SCRIPT_DIR"
 
 echo "=== Copying frontend dist to root ==="
 cp -r StudyCore/frontend/dist .
