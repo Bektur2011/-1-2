@@ -3,16 +3,13 @@ import json
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 
-# Путь к frontend dist
-FRONTEND_DIST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../frontend/dist")
+# Путь к frontend dist (build.sh копирует в корень)
+FRONTEND_DIST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dist")
 print(f"FRONTEND_DIST: {FRONTEND_DIST}")
+print(f"Current working directory: {os.getcwd()}")
 print(f"Dist exists: {os.path.exists(FRONTEND_DIST)}")
-
-# Проверка наличия папки dist
-if not os.path.exists(FRONTEND_DIST):
-    print(f"WARNING: dist folder not found at {FRONTEND_DIST}")
-    print(f"Current directory: {os.getcwd()}")
-    print(f"Available files: {os.listdir(os.path.dirname(os.path.abspath(__file__)))}")
+if os.path.exists(FRONTEND_DIST):
+    print(f"Contents of dist: {os.listdir(FRONTEND_DIST)}")
 
 app = Flask(__name__, static_folder=FRONTEND_DIST, static_url_path='')
 CORS(app)  # разрешаем кросс-доменные запросы
@@ -38,7 +35,7 @@ def write_homework(data):
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 # --- API для логина по паролю ---
-@app.route("/login", methods=["POST"])
+@app.route("/api/login", methods=["POST"])
 def login():
     data = request.json
     password = data.get("password")
@@ -64,31 +61,31 @@ def login():
     return jsonify({"error": "Неверный пароль"}), 401
 
 # --- API для получения всех пользователей ---
-@app.route("/users", methods=["GET"])
+@app.route("/api/users", methods=["GET"])
 def get_users():
     users = read_users()
     return jsonify(users)
 
 # --- API для домашнего задания ---
-@app.route("/homework", methods=["GET"])
+@app.route("/api/homework", methods=["GET"])
 def get_homework():
     homework = read_homework()
     return jsonify(homework)
 
-@app.route("/homework", methods=["POST"])
+@app.route("/api/homework", methods=["POST"])
 def add_homework():
     data = request.json
     homework = read_homework()
-    
+
     # Генерируем ID
     new_id = max([h.get("id", 0) for h in homework], default=0) + 1
     data["id"] = new_id
-    
+
     homework.append(data)
     write_homework(homework)
     return jsonify(data), 201
 
-@app.route("/homework/<int:hw_id>", methods=["DELETE"])
+@app.route("/api/homework/<int:hw_id>", methods=["DELETE"])
 def delete_homework(hw_id):
     homework = read_homework()
     homework = [h for h in homework if h.get("id") != hw_id]
