@@ -1,9 +1,9 @@
 import axios from "./axios";
 
-export const getHomework = () => axios.get("/homework");
+export const getHomework = () => axios.get("/api/homework");
 
 export const addHomework = (title, description) =>
-  axios.post("/homework", { title, description });
+  axios.post("/api/homework", { title, description });
 
 export const deleteHomework = (id) =>
-  axios.delete(`/homework/${id}`);
+  axios.delete(`/api/homework/${id}`);
