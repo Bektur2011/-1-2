@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../store/authStore";
-import axios from "../api/axios";
+import { getUsers } from "../api/users.api";
 import "../styles/journal.css";
 
 const Journal = () => {
@@ -8,13 +8,11 @@ const Journal = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    // Загружаем пользователей с бэкенда через axios (использует базовый URL из api/axios.js)
-    axios
-      .get("/users")
+    getUsers()
       .then((res) => setUsers(res.data))
       .catch((err) => {
         console.error("Ошибка загрузки пользователей:", err);
-        setUsers([]); // Оставляем пустой массив при ошибке
+        setUsers([]);
       });
   }, []);
 
