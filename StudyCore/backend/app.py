@@ -20,6 +20,10 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 if not SUPABASE_URL or not SUPABASE_KEY:
     raise Exception("Supabase env variables not found")
 
+# Validate SUPABASE_URL format
+if not SUPABASE_URL.startswith("https://") or not SUPABASE_URL.endswith(".supabase.co") or SUPABASE_URL.endswith("/"):
+    raise Exception("Invalid SUPABASE_URL format. Must be https://xxxx.supabase.co without trailing slash.")
+
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # --- API для логина по паролю ---
