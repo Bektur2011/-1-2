@@ -14,8 +14,8 @@ app = Flask(__name__, static_folder=FRONTEND_DIST, static_url_path='')
 CORS(app)  # разрешаем кросс-доменные запросы
 
 # Supabase setup
-SUPABASE_URL = os.getenv("https://jqfifytmlpofxzwkeavm.supabase.co")
-SUPABASE_KEY = os.getenv("вот eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpxZmlmeXRtbHBvZnh6d2tlYXZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg2NDAzMjEsImV4cCI6MjA4NDIxNjMyMX0.v6LhYGzSE6V74QOVq6vip8l7zlQaE-ksZlo1Mp9G_nA")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 if not SUPABASE_URL or not SUPABASE_KEY:
     raise Exception("Supabase env variables not found")
