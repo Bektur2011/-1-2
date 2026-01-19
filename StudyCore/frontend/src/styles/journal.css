@@ -8,17 +8,55 @@
   overflow: hidden;
 }
 
-.journal-page::before {
-  content: '';
+/* Animated particles background */
+.particles-bg {
   position: absolute;
-  top: -50%;
-  right: -50%;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
   background-size: 50px 50px;
   animation: float 20s linear infinite;
   z-index: 0;
+  pointer-events: none;
+}
+
+.particles-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.2) 0%, transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.2) 0%, transparent 50%);
+  animation: pulse 8s ease-in-out infinite;
+}
+
+/* Loading spinner */
+.loading-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 10;
+}
+
+.spinner-icon {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+}
+
+.loading-spinner p {
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 500;
 }
 
 .journal-container {

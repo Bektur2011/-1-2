@@ -2,17 +2,24 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../store/authStore";
 import { getUsers } from "../api/users.api";
 import "../styles/journal.css";
+import "../styles/animations.css";
 
 const Journal = () => {
   const user = useAuth((state) => state.user);
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     getUsers()
-      .then((res) => setUsers(res.data))
+      .then((res) => {
+        setUsers(res.data);
+        setLoading(false);
+      })
       .catch((err) => {
         console.error("Ошибка загрузки пользователей:", err);
         setUsers([]);
+        setLoading(false);
       });
   }, []);
 
@@ -38,37 +45,51 @@ const Journal = () => {
     return gender === "Female" ? "👩" : "👨";
   };
 
+  if (loading) {
+    return (
+      <div className="journal-page">
+        <div className="loading-spinner">
+          <div className="spinner-icon animate-spin"></div>
+          <p>Загрузка данных...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="journal-page">
+      {/* Animated background */}
+      <div className="particles-bg"></div>
+      
       <div className="journal-container">
-        <div className="journal-header">
-          <h2>📖 Журнал учеников</h2>
-          {user && <p>Добро пожаловать, {user.role} {user.name}!</p>}
+        <div className="journal-header animate-zoom-in">
+          <h2 className="animate-neon">📖 Журнал учеников</h2>
+          {user && <p className="animate-fade-in">Добро пожаловать, {user.role} {user.name}!</p>}
         </div>
 
         <div className="stats-row">
-          <div className="stat-card">
-            <div className="stat-card-number">{stats.total}</div>
+          <div className="stat-card animate-bounce-in" style={{ animationDelay: '0s' }}>
+            <div className="stat-card-number animate-pulse">{stats.total}</div>
             <div className="stat-card-label">Всего пользователей</div>
           </div>
-          <div className="stat-card">
-            <div className="stat-card-number">{stats.students}</div>
+          <div className="stat-card animate-bounce-in" style={{ animationDelay: '0.1s' }}>
+            <div className="stat-card-number animate-pulse">{stats.students}</div>
             <div className="stat-card-label">Студентов</div>
           </div>
-          <div className="stat-card">
-            <div className="stat-card-number">{stats.moderators}</div>
+          <div className="stat-card animate-bounce-in" style={{ animationDelay: '0.2s' }}>
+            <div className="stat-card-number animate-pulse">{stats.moderators}</div>
             <div className="stat-card-label">Модераторов</div>
           </div>
-          <div className="stat-card">
-            <div className="stat-card-number">{stats.admins}</div>
+          <div className="stat-card animate-bounce-in" style={{ animationDelay: '0.3s' }}>
+            <div className="stat-card-number animate-pulse">{stats.admins}</div>
             <div className="stat-card-label">Администраторов</div>
           </div>
         </div>
 
         {users.length === 0 ? (
-          <div className="empty-message">Пользователей пока нет</div>
+          <div className="empty-message animate-fade-in">Пользователей пока нет</div>
         ) : (
-          <div className="journal-table-wrapper">
+          <div className="journal-table-wrapper animate-fade-in">
             <table className="journal-table">
               <thead>
                 <tr>
@@ -81,7 +102,7 @@ const Journal = () => {
               </thead>
               <tbody>
                 {users.map((u, index) => (
-                  <tr key={u.id} style={{ animationDelay: `${index * 0.05}s` }}>
+                  <tr key={u.id} className="animate-slide-up" style={{ animationDelay: `${index * 0.05}s` }}>
                     <td>{u.id}</td>
                     <td>{u.login}</td>
                     <td>

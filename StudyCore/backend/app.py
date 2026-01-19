@@ -11,7 +11,8 @@ load_dotenv()
 FRONTEND_DIST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../dist")
 
 app = Flask(__name__, static_folder=FRONTEND_DIST, static_url_path='')
-CORS(app)  # разрешаем кросс-доменные запросы
+# Configure CORS to allow requests from any origin in production
+CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 
 # Supabase setup
 SUPABASE_URL = os.getenv("SUPABASE_URL")
@@ -33,27 +34,33 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 @app.route("/api/login", methods=["POST"])
 def login():
     data = request.json
-    password = data.get("password")
+    password = data.get("password", "").strip()  # Strip whitespace from password
 
     print(f"Login attempt with password: '{password}'")  # для отладки
+    print(f"Request headers: {dict(request.headers)}")  # Debug headers
+    print(f"Request origin: {request.headers.get('Origin', 'No origin')}")  # Debug origin
 
-    response = supabase.table('users').select('*').eq('password', password).execute()
-    user = response.data[0] if response.data else None
+    try:
+        response = supabase.table('users').select('*').eq('password', password).execute()
+        user = response.data[0] if response.data else None
 
-    if user:
-        gender_prefix = "Ученица" if user.get("gender") == "Female" else "Ученик"
-        response_data = {
-            "id": user["id"],
-            "name": user["name"],
-            "role": user["role"],
-            "gender": user["gender"],
-            "welcome": f"Добро пожаловать {gender_prefix} {user['name']}"
-        }
-        print(f"Login successful for user: {user['name']}")
-        return jsonify(response_data)
+        if user:
+            gender_prefix = "Ученица" if user.get("gender") == "Female" else "Ученик"
+            response_data = {
+                "id": user["id"],
+                "name": user["name"],
+                "role": user["role"],
+                "gender": user["gender"],
+                "welcome": f"Добро пожаловать {gender_prefix} {user['name']}"
+            }
+            print(f"Login successful for user: {user['name']}")
+            return jsonify(response_data), 200
 
-    print(f"Login failed: password not found")
-    return jsonify({"error": "Неверный пароль"}), 401
+        print(f"Login failed: password not found")
+        return jsonify({"error": "Неверный пароль"}), 401
+    except Exception as e:
+        print(f"Database error during login: {str(e)}")
+        return jsonify({"error": "Ошибка сервера"}), 500
 
 # --- API для получения всех пользователей ---
 @app.route("/api/users", methods=["GET"])

@@ -8,17 +8,30 @@
   overflow: hidden;
 }
 
-.menu-page::before {
-  content: '';
+/* Animated particles background */
+.particles-bg {
   position: absolute;
-  top: -50%;
-  right: -50%;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
   background-size: 50px 50px;
   animation: float 20s linear infinite;
   z-index: 0;
+  pointer-events: none;
+}
+
+.particles-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.2) 0%, transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.2) 0%, transparent 50%);
+  animation: pulse 8s ease-in-out infinite;
 }
 
 .menu-container {

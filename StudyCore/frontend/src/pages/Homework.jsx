@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../store/authStore";
 import { getHomework, addHomework, deleteHomework } from "../api/homework.api";
 import "../styles/homework.css";
+import "../styles/animations.css";
 
 export default function Homework() {
   const user = useAuth((state) => state.user);
@@ -62,19 +63,29 @@ export default function Homework() {
   const canAddHomework = user && (user.role === "Moderator" || user.role === "Admin");
 
   if (loading) {
-    return <div className="homework-page"><p>Загрузка...</p></div>;
+    return (
+      <div className="homework-page">
+        <div className="loading-spinner">
+          <div className="spinner-icon animate-spin"></div>
+          <p>Загрузка заданий...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="homework-page">
+      {/* Animated background */}
+      <div className="particles-bg"></div>
+      
       <div className="homework-container">
-        <div className="homework-header">
-          <h2>📚 Домашние задания</h2>
+        <div className="homework-header animate-zoom-in">
+          <h2 className="animate-neon">📚 Домашние задания</h2>
         </div>
 
         {/* Форма добавления - видна только для модераторов и админов */}
         {canAddHomework && (
-          <div className="homework-form">
+          <div className="homework-form animate-bounce-in">
             <div className="form-row">
               <div className="form-group">
                 <label>Название задания</label>
@@ -95,18 +106,18 @@ export default function Homework() {
                 />
               </div>
             </div>
-            <button className="btn-add" onClick={add}>
+            <button className="btn-add animate-glow" onClick={add}>
               ➕ Добавить задание
             </button>
           </div>
         )}
 
         {list.length === 0 ? (
-          <div className="empty-message">Заданий пока нет</div>
+          <div className="empty-message animate-fade-in">Заданий пока нет</div>
         ) : (
           <div className="homework-list">
             {list.map((h, index) => (
-              <div key={h.id} className="homework-item" style={{ animationDelay: `${index * 0.1}s` }}>
+              <div key={h.id} className="homework-item animate-bounce-in" style={{ animationDelay: `${index * 0.1}s` }}>
                 <div className="homework-item-content">
                   <h3>{h.title}</h3>
                   <p>{h.description}</p>
