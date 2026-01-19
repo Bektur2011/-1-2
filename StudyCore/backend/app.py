@@ -33,33 +33,81 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 # --- API для логина по паролю ---
 @app.route("/api/login", methods=["POST"])
 def login():
+    """
+    Endpoint для авторизации пользователя по паролю
+    POST /api/login
+    Body: { "password": "пароль" }
+    """
+    # Получаем данные из запроса
     data = request.json
-    password = data.get("password", "").strip()  # Strip whitespace from password
-
-    print(f"Login attempt with password: '{password}'")  # для отладки
-    print(f"Request headers: {dict(request.headers)}")  # Debug headers
-    print(f"Request origin: {request.headers.get('Origin', 'No origin')}")  # Debug origin
-
+    if not data:
+        print("ERROR: No JSON data received")
+        return jsonify({"error": "Некорректный запрос"}), 400
+    
+    # Извлекаем пароль и убираем пробелы
+    password = data.get("password", "").strip()
+    
+    # Детальное логирование
+    print("=" * 60)
+    print("LOGIN ATTEMPT")
+    print("=" * 60)
+    print(f"PASSWORD FROM CLIENT: '{password}'")
+    print(f"PASSWORD LENGTH: {len(password)}")
+    print(f"REQUEST METHOD: {request.method}")
+    print(f"REQUEST ORIGIN: {request.headers.get('Origin', 'No origin')}")
+    print(f"CONTENT-TYPE: {request.headers.get('Content-Type', 'Not set')}")
+    print("=" * 60)
+    
+    # Проверка что пароль предоставлен
+    if not password:
+        print("ERROR: Password is empty")
+        return jsonify({"error": "Пароль не указан"}), 400
+    
     try:
+        # Запрос к Supabase
+        print(f"Searching user in Supabase with password: '{password}'")
         response = supabase.table('users').select('*').eq('password', password).execute()
-        user = response.data[0] if response.data else None
-
-        if user:
-            gender_prefix = "Ученица" if user.get("gender") == "Female" else "Ученик"
-            response_data = {
-                "id": user["id"],
-                "name": user["name"],
-                "role": user["role"],
-                "gender": user["gender"],
-                "welcome": f"Добро пожаловать {gender_prefix} {user['name']}"
-            }
-            print(f"Login successful for user: {user['name']}")
-            return jsonify(response_data), 200
-
-        print(f"Login failed: password not found")
-        return jsonify({"error": "Неверный пароль"}), 401
+        
+        # Логируем результат запроса
+        print(f"Supabase response data type: {type(response.data)}")
+        print(f"Supabase response data length: {len(response.data) if response.data else 0}")
+        
+        # Проверяем результат (response.data - это массив)
+        if not response.data:
+            print("LOGIN FAILED: No user found with this password")
+            print("=" * 60)
+            return jsonify({"error": "Неверный пароль"}), 401
+        
+        # Получаем первого пользователя из массива
+        user = response.data[0]
+        print(f"USER FOUND: {user.get('login', 'unknown')} ({user.get('name', 'unknown')})")
+        print(f"USER ROLE: {user.get('role', 'unknown')}")
+        print(f"USER GENDER: {user.get('gender', 'unknown')}")
+        
+        # Формируем ответ (НЕ возвращаем пароль!)
+        response_data = {
+            "id": user["id"],
+            "login": user["login"],
+            "name": user["name"],
+            "role": user["role"],
+            "gender": user["gender"]
+        }
+        
+        print(f"LOGIN SUCCESSFUL for user: {user['name']}")
+        print("=" * 60)
+        return jsonify(response_data), 200
+        
+    except KeyError as e:
+        # Ошибка структуры данных
+        print(f"ERROR: Missing field in user data: {str(e)}")
+        print("=" * 60)
+        return jsonify({"error": "Ошибка данных пользователя"}), 500
+        
     except Exception as e:
-        print(f"Database error during login: {str(e)}")
+        # Любая другая ошибка
+        print(f"DATABASE ERROR: {str(e)}")
+        print(f"ERROR TYPE: {type(e).__name__}")
+        print("=" * 60)
         return jsonify({"error": "Ошибка сервера"}), 500
 
 # --- API для получения всех пользователей ---
