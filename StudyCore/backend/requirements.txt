@@ -1,4 +1,4 @@
 Flask==2.3.3
 Flask-CORS==3.0.10
-supabase==2.12.1
+supabase==2.27.2
 python-dotenv==1.0.0
