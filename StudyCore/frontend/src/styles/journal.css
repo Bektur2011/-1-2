@@ -217,34 +217,85 @@
   }
 }
 
-/* Responsive */
+/* Responsive Design - Mobile First */
+
+/* Tablets and larger phones */
+@media (max-width: 1024px) {
+  .journal-page {
+    padding: 2.5rem 1.5rem;
+  }
+
+  .journal-header h2 {
+    font-size: 2rem;
+  }
+
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
+  }
+
+  .journal-table-wrapper {
+    padding: 1.8rem;
+  }
+
+  .journal-table th,
+  .journal-table td {
+    padding: 1rem 0.8rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* Standard mobile phones */
 @media (max-width: 768px) {
   .journal-page {
     padding: 2rem 1rem;
   }
 
+  .journal-header {
+    margin-bottom: 2rem;
+  }
+
   .journal-header h2 {
     font-size: 1.8rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .journal-header p {
+    font-size: 1rem;
   }
 
   .journal-table-wrapper {
-    padding: 1.5rem;
+    padding: 1.2rem;
+    border-radius: 12px;
+  }
+
+  .journal-table {
+    font-size: 0.9rem;
   }
 
   .journal-table th,
   .journal-table td {
-    padding: 0.8rem 0.5rem;
-    font-size: 0.9rem;
+    padding: 0.8rem 0.6rem;
+    font-size: 0.85rem;
+  }
+
+  .journal-table th {
+    font-size: 0.75rem;
   }
 
   .role-badge {
     padding: 0.3rem 0.7rem;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
+  }
+
+  .gender-icon {
+    margin-right: 0.3rem;
   }
 
   .stats-row {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
   }
 
   .stat-card {
@@ -253,5 +304,204 @@
 
   .stat-card-number {
     font-size: 1.5rem;
+  }
+
+  .stat-card-label {
+    font-size: 0.8rem;
+  }
+
+  .empty-message {
+    font-size: 1rem;
+    padding: 2rem;
+  }
+}
+
+/* Small mobile phones */
+@media (max-width: 480px) {
+  .journal-page {
+    padding: 1.5rem 0.8rem;
+  }
+
+  .journal-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .journal-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .journal-header p {
+    font-size: 0.9rem;
+  }
+
+  .journal-table-wrapper {
+    padding: 1rem;
+    border-radius: 10px;
+  }
+
+  .journal-table th,
+  .journal-table td {
+    padding: 0.7rem 0.4rem;
+    font-size: 0.75rem;
+  }
+
+  .journal-table th {
+    font-size: 0.7rem;
+    padding: 0.8rem 0.4rem;
+  }
+
+  .journal-table td:first-child {
+    font-weight: 500;
+  }
+
+  .role-badge {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.3px;
+  }
+
+  .gender-icon {
+    font-size: 0.9rem;
+  }
+
+  .stats-row {
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .stat-card {
+    padding: 0.8rem;
+  }
+
+  .stat-card-number {
+    font-size: 1.3rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .stat-card-label {
+    font-size: 0.75rem;
+  }
+
+  .empty-message {
+    font-size: 0.9rem;
+    padding: 1.5rem;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 360px) {
+  .journal-page {
+    padding: 1rem 0.5rem;
+  }
+
+  .journal-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .journal-header p {
+    font-size: 0.85rem;
+  }
+
+  .journal-table-wrapper {
+    padding: 0.8rem;
+  }
+
+  .journal-table th,
+  .journal-table td {
+    padding: 0.6rem 0.3rem;
+    font-size: 0.7rem;
+  }
+
+  .journal-table th {
+    font-size: 0.65rem;
+  }
+
+  .role-badge {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.6rem;
+  }
+
+  .stat-card-number {
+    font-size: 1.2rem;
+  }
+
+  .stat-card-label {
+    font-size: 0.7rem;
+  }
+}
+
+/* Landscape mode for phones */
+@media (max-height: 500px) and (orientation: landscape) {
+  .journal-page {
+    padding: 1rem;
+  }
+
+  .journal-header {
+    margin-bottom: 1rem;
+  }
+
+  .journal-header h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .journal-header p {
+    font-size: 0.9rem;
+  }
+
+  .stats-row {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .stat-card {
+    padding: 0.6rem;
+  }
+
+  .stat-card-number {
+    font-size: 1.2rem;
+  }
+
+  .stat-card-label {
+    font-size: 0.7rem;
+  }
+
+  .journal-table-wrapper {
+    padding: 1rem;
+  }
+
+  .journal-table th,
+  .journal-table td {
+    padding: 0.6rem 0.5rem;
+  }
+}
+
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+  .journal-page {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  }
+
+  .journal-table-wrapper {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+  .journal-table tbody tr {
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .journal-table tbody tr:active {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  .stat-card:active {
+    transform: scale(0.98);
   }
 }
