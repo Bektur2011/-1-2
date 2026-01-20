@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../store/authStore";
 import { getHomework, addHomework, deleteHomework } from "../api/homework.api";
 import "../styles/homework.css";
+import "../styles/homework-mobile.css";
 import "../styles/animations.css";
 
 export default function Homework() {

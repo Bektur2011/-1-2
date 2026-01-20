@@ -1,0 +1,317 @@
+/* 📱 Улучшенные мобильные стили для Homework страницы */
+
+/* Базовые исправления для всех мобильных */
+@media (max-width: 768px) {
+  .homework-page {
+    padding: 1rem 0.75rem;
+    min-height: -webkit-fill-available; /* iOS Safari fix */
+    min-height: 100vh;
+  }
+
+  .homework-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .homework-header h2 {
+    font-size: 1.75rem;
+    line-height: 1.2;
+    padding: 0 0.5rem;
+  }
+
+  /* Форма - стек для мобильных */
+  .homework-form {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr !important; /* Всегда одна колонка */
+    gap: 0.75rem;
+  }
+
+  .form-group label {
+    font-size: 0.85rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 0.75rem;
+    font-size: 16px !important; /* Предотвращает зум на iOS */
+    border-radius: 8px;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  .form-group textarea {
+    min-height: 80px;
+  }
+
+  /* Кнопка добавления */
+  .btn-add {
+    padding: 1rem;
+    font-size: 0.95rem;
+    min-height: 48px; /* Минимум для удобного касания */
+    width: 100%;
+    border-radius: 8px;
+  }
+
+  /* Список заданий - одна колонка */
+  .homework-list {
+    grid-template-columns: 1fr !important;
+    gap: 1rem;
+  }
+
+  /* Карточки заданий */
+  .homework-item {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .homework-item-content {
+    width: 100%;
+  }
+
+  .homework-item h3 {
+    font-size: 1.1rem;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+
+  .homework-item p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  /* Кнопка удаления - внизу карточки */
+  .btn-delete {
+    align-self: flex-end;
+    min-width: 48px;
+    min-height: 48px;
+    padding: 0.5rem;
+    font-size: 1.2rem;
+  }
+
+  .empty-message {
+    padding: 2rem 1rem;
+    font-size: 1rem;
+  }
+}
+
+/* Маленькие экраны (iPhone SE, малые Android) */
+@media (max-width: 400px) {
+  .homework-page {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .homework-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .homework-form {
+    padding: 0.875rem;
+    border-radius: 10px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    padding: 0.625rem;
+    font-size: 15px !important;
+  }
+
+  .btn-add {
+    padding: 0.875rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+  }
+
+  .homework-item {
+    padding: 0.875rem;
+  }
+
+  .homework-item h3 {
+    font-size: 1rem;
+  }
+
+  .homework-item p {
+    font-size: 0.875rem;
+  }
+
+  .btn-delete {
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 1.1rem;
+  }
+}
+
+/* Альбомная ориентация для мобильных */
+@media (max-width: 900px) and (max-height: 500px) and (orientation: landscape) {
+  .homework-page {
+    padding: 0.5rem 0.5rem 0.5rem calc(env(safe-area-inset-left) + 0.5rem);
+    padding-right: calc(env(safe-area-inset-right) + 0.5rem);
+  }
+
+  .homework-header {
+    margin-bottom: 0.75rem;
+  }
+
+  .homework-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .homework-form {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  /* В ландшафте можно 2 колонки на больших телефонах */
+  .homework-list {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+    gap: 0.75rem;
+  }
+
+  .homework-item {
+    padding: 0.75rem;
+    min-height: unset;
+  }
+
+  .homework-item h3 {
+    font-size: 0.95rem;
+  }
+
+  .homework-item p {
+    font-size: 0.85rem;
+  }
+}
+
+/* Safe Area для iOS (iPhone X и новее) */
+@supports (padding: max(0px)) {
+  .homework-page {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    padding-left: max(0.75rem, env(safe-area-inset-left));
+    padding-right: max(0.75rem, env(safe-area-inset-right));
+  }
+
+  @media (max-width: 400px) {
+    .homework-page {
+      padding-left: max(0.5rem, env(safe-area-inset-left));
+      padding-right: max(0.5rem, env(safe-area-inset-right));
+    }
+  }
+}
+
+/* iOS Safari специфичные фиксы */
+@supports (-webkit-touch-callout: none) {
+  /* Убираем зум при фокусе на input */
+  .form-group input,
+  .form-group textarea {
+    font-size: 16px !important;
+  }
+
+  /* Фикс для 100vh на iOS */
+  .homework-page {
+    min-height: -webkit-fill-available;
+  }
+
+  /* Убираем highlight при тапе */
+  .btn-add,
+  .btn-delete,
+  .homework-item {
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+  }
+
+  /* Убираем тень при скролле */
+  .homework-form input,
+  .homework-form textarea {
+    -webkit-appearance: none;
+  }
+}
+
+/* Android Chrome специфичные фиксы */
+@supports not (-webkit-touch-callout: none) {
+  .homework-form input,
+  .homework-form textarea {
+    -webkit-appearance: none;
+  }
+
+  .btn-add,
+  .btn-delete {
+    -webkit-tap-highlight-color: rgba(102, 126, 234, 0.1);
+  }
+}
+
+/* Улучшение касаний (минимальный размер кнопок) */
+@media (pointer: coarse) {
+  .btn-add,
+  .btn-delete {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    min-height: 44px;
+  }
+}
+
+/* Предотвращение случайного масштабирования */
+@media (max-width: 768px) {
+  input[type="text"],
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Улучшение производительности анимаций на мобильных */
+@media (max-width: 768px) {
+  .homework-item,
+  .btn-add,
+  .btn-delete {
+    will-change: auto;
+  }
+
+  .homework-item:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+
+  .btn-add:active {
+    transform: translateY(-1px);
+    transition: transform 0.1s ease;
+  }
+
+  .btn-delete:active {
+    transform: scale(1.05);
+    transition: transform 0.1s ease;
+  }
+}
+
+/* Убираем излишние анимации на слабых устройствах */
+@media (prefers-reduced-motion: reduce) {
+  .homework-item,
+  .homework-form,
+  .btn-add {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .homework-item::before {
+    display: none;
+  }
+}
+
+/* Темная тема (если системная) */
+@media (prefers-color-scheme: dark) {
+  .homework-form input,
+  .homework-form textarea {
+    background: rgba(255, 255, 255, 0.9);
+    color: #1a1a1a;
+  }
+
+  .homework-form input::placeholder,
+  .homework-form textarea::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+  }
+}
