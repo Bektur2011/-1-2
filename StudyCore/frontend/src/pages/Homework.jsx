@@ -10,7 +10,6 @@ export default function Homework() {
   const [list, setList] = useState([]);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(true);
 
   // Загружаем ДЗ с бэкенда при открытии страницы
@@ -37,11 +36,10 @@ export default function Homework() {
     }
     
     try {
-      const response = await addHomework(title, desc, imageUrl);
+      const response = await addHomework(title, desc, "");
       setList([...list, response.data]);
       setTitle("");
       setDesc("");
-      setImageUrl("");
     } catch (err) {
       console.error("Ошибка при добавлении ДЗ:", err);
       alert("Ошибка при добавлении задания. Проверьте подключение к базе данных.");
@@ -107,22 +105,6 @@ export default function Homework() {
                   value={desc}
                   onChange={(e) => setDesc(e.target.value)}
                 />
-              </div>
-            </div>
-            <div className="form-row full">
-              <div className="form-group">
-                <label>🖼️ Ссылка на изображение (необязательно)</label>
-                <input
-                  type="text"
-                  placeholder="Вставьте ссылку на изображение (например, https://...)"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                />
-                {imageUrl && (
-                  <div className="image-preview">
-                    <img src={imageUrl} alt="Preview" onError={(e) => e.target.style.display = 'none'} />
-                  </div>
-                )}
               </div>
             </div>
             <button 
