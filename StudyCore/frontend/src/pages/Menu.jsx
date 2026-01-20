@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../store/authStore";
 import "../styles/menu.css";
+import "../styles/menu-mobile.css";
 import "../styles/animations.css";
 
 const Menu = () => {

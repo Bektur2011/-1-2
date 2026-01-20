@@ -193,7 +193,7 @@
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   border-radius: 12px;
-  padding: 2rem;
+  padding: 0;
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -201,9 +201,8 @@
   position: relative;
   overflow: hidden;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
+  flex-direction: column;
+  gap: 0;
 }
 
 .homework-item::before {
@@ -226,9 +225,32 @@
   left: 100%;
 }
 
+/* Изображение задания */
+.homework-image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+  position: relative;
+}
+
+.homework-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.homework-item:hover .homework-image img {
+  transform: scale(1.05);
+}
+
 .homework-item-content {
   position: relative;
   z-index: 1;
+  padding: 1.5rem 2rem;
+  flex: 1;
 }
 
 .homework-item h3 {
@@ -244,6 +266,14 @@
   line-height: 1.6;
   margin: 0;
   word-break: break-word;
+}
+
+/* Кнопка удаления - в правом нижнем углу */
+.homework-item .btn-delete {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 2;
 }
 
 .empty-message {
@@ -370,10 +400,16 @@
   }
 
   .homework-item {
-    padding: 1.5rem;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
+    padding: 0;
+  }
+
+  .homework-image {
+    height: 180px;
+  }
+
+  .homework-item-content {
+    padding: 1.25rem 1.5rem;
+    padding-bottom: 3.5rem; /* Место для кнопки удаления */
   }
 
   .homework-item h3 {
@@ -385,8 +421,9 @@
     line-height: 1.5;
   }
 
-  .btn-delete {
-    align-self: flex-end;
+  .homework-item .btn-delete {
+    bottom: 0.75rem;
+    right: 0.75rem;
     min-width: 44px;
     height: 44px;
   }
@@ -428,8 +465,17 @@
   }
 
   .homework-item {
-    padding: 1.2rem;
+    padding: 0;
     border-radius: 10px;
+  }
+
+  .homework-image {
+    height: 150px;
+  }
+
+  .homework-item-content {
+    padding: 1rem 1.2rem;
+    padding-bottom: 3rem;
   }
 
   .homework-item h3 {
@@ -440,7 +486,9 @@
     font-size: 0.9rem;
   }
 
-  .btn-delete {
+  .homework-item .btn-delete {
+    bottom: 0.6rem;
+    right: 0.6rem;
     min-width: 40px;
     height: 40px;
     font-size: 1rem;

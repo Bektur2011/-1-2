@@ -45,6 +45,7 @@ CREATE TABLE homework (
   id BIGSERIAL PRIMARY KEY,
   title TEXT NOT NULL,
   description TEXT NOT NULL,
+  image_url TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -163,6 +164,7 @@ https://supabase.com/dashboard/project/jqfifytmlpofxzwkeavm/editor/public/homewo
 | `id` | BIGSERIAL (auto-increment) | Уникальный ID задания |
 | `title` | TEXT (NOT NULL) | Название задания |
 | `description` | TEXT (NOT NULL) | Описание задания |
+| `image_url` | TEXT (необязательно) | Ссылка на фото задания |
 | `created_at` | TIMESTAMPTZ | Дата создания (автоматически) |
 
 ---

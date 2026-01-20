@@ -10,6 +10,7 @@ export default function Homework() {
   const [list, setList] = useState([]);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(true);
 
   // Загружаем ДЗ с бэкенда при открытии страницы
@@ -31,15 +32,16 @@ export default function Homework() {
 
   const add = async () => {
     if (!title || !desc) {
-      alert("Заполните все поля!");
+      alert("Заполните название и описание!");
       return;
     }
     
     try {
-      const response = await addHomework(title, desc);
+      const response = await addHomework(title, desc, imageUrl);
       setList([...list, response.data]);
       setTitle("");
       setDesc("");
+      setImageUrl("");
     } catch (err) {
       console.error("Ошибка при добавлении ДЗ:", err);
       alert("Ошибка при добавлении задания");
@@ -107,6 +109,17 @@ export default function Homework() {
                 />
               </div>
             </div>
+            <div className="form-row full">
+              <div className="form-group">
+                <label>📷 Ссылка на фото (необязательно)</label>
+                <input
+                  type="text"
+                  placeholder="https://example.com/image.jpg"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                />
+              </div>
+            </div>
             <button className="btn-add animate-glow" onClick={add}>
               ➕ Добавить задание
             </button>
@@ -119,6 +132,12 @@ export default function Homework() {
           <div className="homework-list">
             {list.map((h, index) => (
               <div key={h.id} className="homework-item animate-bounce-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                {/* Фото задания (если есть) */}
+                {h.image_url && (
+                  <div className="homework-image">
+                    <img src={h.image_url} alt={h.title} />
+                  </div>
+                )}
                 <div className="homework-item-content">
                   <h3>{h.title}</h3>
                   <p>{h.description}</p>

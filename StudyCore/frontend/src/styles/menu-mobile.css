@@ -1,0 +1,251 @@
+/* 📱 Мобильные стили для меню - ТОЛЬКО ИКОНКИ */
+
+/* Базовые мобильные стили */
+@media (max-width: 768px) {
+  .menu-page {
+    padding: 1rem 0.5rem;
+    padding-top: 5vh;
+  }
+
+  .menu-container {
+    padding: 0;
+  }
+
+  .menu-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .menu-header h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .menu-header p {
+    font-size: 0.9rem;
+  }
+
+  .menu-header .role-badge {
+    padding: 0.35rem 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  /* ГЛАВНОЕ: Сетка иконок для мобильных */
+  .menu-nav {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1rem;
+  }
+
+  /* Карточки меню - компактные с БОЛЬШИМИ иконками */
+  .menu-nav a {
+    padding: 1.5rem 0.5rem;
+    min-height: 120px;
+    font-size: 0.85rem;
+    border-radius: 12px;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  /* ИКОНКИ - делаем их огромными */
+  .menu-icon {
+    font-size: 3rem !important; /* Большая иконка */
+    margin-bottom: 0.5rem;
+  }
+
+  /* ТЕКСТ - прячем на самых маленьких экранах */
+  .menu-nav a span:not(.menu-icon) {
+    font-size: 0.75rem;
+    text-align: center;
+    line-height: 1.2;
+  }
+}
+
+/* Очень маленькие экраны - ТОЛЬКО ИКОНКИ */
+@media (max-width: 480px) {
+  .menu-page {
+    padding: 0.75rem 0.5rem;
+    padding-top: 3vh;
+  }
+
+  .menu-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .menu-header p {
+    font-size: 0.85rem;
+  }
+
+  .menu-header .role-badge {
+    display: block;
+    margin: 0.5rem auto 0;
+    width: fit-content;
+  }
+
+  /* Сетка 2x2 */
+  .menu-nav {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem;
+  }
+
+  /* Компактные карточки */
+  .menu-nav a {
+    padding: 1.25rem 0.5rem;
+    min-height: 100px;
+    border-radius: 10px;
+  }
+
+  /* ОГРОМНЫЕ иконки */
+  .menu-icon {
+    font-size: 2.75rem !important;
+    margin-bottom: 0.4rem;
+  }
+
+  /* ТЕКСТ - очень маленький */
+  .menu-nav a span:not(.menu-icon) {
+    font-size: 0.7rem;
+    font-weight: 500;
+  }
+}
+
+/* Супер маленькие экраны (iPhone SE, малые Android) - ТОЛЬКО ИКОНКИ БЕЗ ТЕКСТА */
+@media (max-width: 380px) {
+  .menu-page {
+    padding: 0.5rem 0.25rem;
+    padding-top: 2vh;
+  }
+
+  .menu-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .menu-header p {
+    font-size: 0.8rem;
+  }
+
+  .menu-nav {
+    gap: 0.5rem;
+  }
+
+  /* Квадратные карточки только с иконками */
+  .menu-nav a {
+    padding: 1rem 0.5rem;
+    min-height: 90px;
+    aspect-ratio: 1;
+  }
+
+  /* СУПЕР БОЛЬШИЕ иконки */
+  .menu-icon {
+    font-size: 2.5rem !important;
+    margin-bottom: 0.3rem;
+  }
+
+  /* ТЕКСТ - прячем полностью на маленьких экранах */
+  .menu-nav a span:not(.menu-icon) {
+    font-size: 0.65rem;
+    font-weight: 600;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+/* Альбомная ориентация */
+@media (max-width: 900px) and (max-height: 500px) and (orientation: landscape) {
+  .menu-page {
+    padding: 0.5rem;
+    padding-top: 1vh;
+  }
+
+  .menu-header {
+    margin-bottom: 0.75rem;
+  }
+
+  .menu-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .menu-header p {
+    font-size: 0.75rem;
+  }
+
+  /* 4 колонки в альбомной ориентации */
+  .menu-nav {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 0.5rem;
+  }
+
+  .menu-nav a {
+    padding: 0.75rem 0.5rem;
+    min-height: 80px;
+  }
+
+  .menu-icon {
+    font-size: 2rem !important;
+    margin-bottom: 0.25rem;
+  }
+
+  .menu-nav a span:not(.menu-icon) {
+    font-size: 0.65rem;
+  }
+}
+
+/* Safe Area для iOS (вырезы и закругления) */
+@supports (padding: max(0px)) {
+  .menu-page {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    padding-left: max(0.5rem, env(safe-area-inset-left));
+    padding-right: max(0.5rem, env(safe-area-inset-right));
+  }
+}
+
+/* iOS Safari фиксы */
+@supports (-webkit-touch-callout: none) {
+  .menu-page {
+    min-height: -webkit-fill-available;
+  }
+
+  .menu-nav a {
+    -webkit-tap-highlight-color: rgba(102, 126, 234, 0.1);
+  }
+}
+
+/* Улучшение касаний */
+@media (pointer: coarse) {
+  .menu-nav a {
+    min-height: 88px; /* iOS touch target */
+    min-width: 88px;
+  }
+}
+
+/* Активное состояние для тач-устройств */
+@media (max-width: 768px) {
+  .menu-nav a:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+  }
+}
+
+/* Темная тема */
+@media (prefers-color-scheme: dark) and (max-width: 768px) {
+  .menu-nav a {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .menu-nav a:hover,
+  .menu-nav a:active {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+/* Убираем анимации на слабых устройствах */
+@media (prefers-reduced-motion: reduce) {
+  .menu-nav a {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .menu-nav a::before {
+    display: none;
+  }
+}
