@@ -3,6 +3,8 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from supabase import create_client, Client
 from dotenv import load_dotenv
+from werkzeug.utils import secure_filename
+import uuid
 
 # Load environment variables
 load_dotenv()
@@ -10,7 +12,16 @@ load_dotenv()
 # Путь к frontend dist (build.sh копирует в корень проекта)
 FRONTEND_DIST = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../dist")
 
+# Папка для загруженных файлов
+UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp', 'pdf', 'doc', 'docx', 'txt'}
+
+# Создаём папку uploads если её нет
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
 app = Flask(__name__, static_folder=FRONTEND_DIST, static_url_path='')
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Максимум 16MB
 # Configure CORS to allow requests from any origin in production
 CORS(app, resources={r"/api/*": {"origins": "*"}}, supports_credentials=True)
 
@@ -29,6 +40,127 @@ if not SUPABASE_URL.startswith("https://") or not SUPABASE_URL.endswith(".supaba
     raise Exception("Invalid SUPABASE_URL format. Must be https://xxxx.supabase.co without trailing slash.")
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+# --- Вспомогательные функции для файлов ---
+def allowed_file(filename):
+    """Проверяет допустимость расширения файла"""
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# --- API для загрузки файлов ---
+@app.route("/api/upload", methods=["POST"])
+def upload_file():
+    """
+    Загружает файл в Supabase Storage и возвращает публичный URL
+    """
+    try:
+        print("=" * 60)
+        print("FILE UPLOAD REQUEST")
+        print("=" * 60)
+        
+        # Проверяем наличие файла в запросе
+        if 'file' not in request.files:
+            print("ERROR: No file in request")
+            print("=" * 60)
+            return jsonify({"error": "Файл не найден в запросе"}), 400
+        
+        file = request.files['file']
+        
+        # Проверяем что файл выбран
+        if file.filename == '':
+            print("ERROR: Empty filename")
+            print("=" * 60)
+            return jsonify({"error": "Файл не выбран"}), 400
+        
+        # Проверяем расширение
+        if not allowed_file(file.filename):
+            print(f"ERROR: File type not allowed: {file.filename}")
+            print("=" * 60)
+            return jsonify({"error": "Неподдерживаемый формат файла"}), 400
+        
+        # Генерируем уникальное имя файла
+        ext = file.filename.rsplit('.', 1)[1].lower()
+        unique_filename = f"{uuid.uuid4().hex}.{ext}"
+        
+        # Читаем содержимое файла
+        file_content = file.read()
+        
+        # Определяем MIME тип
+        mime_types = {
+            'png': 'image/png',
+            'jpg': 'image/jpeg',
+            'jpeg': 'image/jpeg',
+            'gif': 'image/gif',
+            'webp': 'image/webp',
+            'pdf': 'application/pdf',
+            'doc': 'application/msword',
+            'docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'txt': 'text/plain'
+        }
+        content_type = mime_types.get(ext, 'application/octet-stream')
+        
+        print(f"Uploading to Supabase Storage: {unique_filename}")
+        print(f"File size: {len(file_content)} bytes")
+        print(f"Content type: {content_type}")
+        
+        # Загружаем файл в Supabase Storage
+        # Bucket: homework-files (нужно создать в Supabase, если его нет)
+        bucket_name = "homework-files"
+        
+        try:
+            # Пытаемся загрузить файл в bucket
+            upload_response = supabase.storage.from_(bucket_name).upload(
+                path=unique_filename,
+                file=file_content,
+                file_options={"content-type": content_type}
+            )
+            
+            print(f"Supabase upload response: {upload_response}")
+            
+            # Получаем публичный URL
+            public_url = supabase.storage.from_(bucket_name).get_public_url(unique_filename)
+            
+            print(f"SUCCESS: File uploaded to Supabase Storage")
+            print(f"Public URL: {public_url}")
+            print("=" * 60)
+            
+            return jsonify({
+                "url": public_url,
+                "filename": unique_filename
+            }), 200
+            
+        except Exception as storage_error:
+            error_message = str(storage_error)
+            print(f"Supabase Storage Error: {error_message}")
+            
+            # Проверяем специфичные ошибки
+            if "not found" in error_message.lower() or "bucket" in error_message.lower():
+                print("=" * 60)
+                print("⚠️  HINT: Bucket 'homework-files' does not exist!")
+                print("⚠️  Create it in Supabase Dashboard:")
+                print("   1. Go to Storage in Supabase Dashboard")
+                print("   2. Create new bucket: 'homework-files'")
+                print("   3. Make it PUBLIC (Settings -> Public bucket: ON)")
+                print("=" * 60)
+                return jsonify({
+                    "error": "Storage bucket not configured",
+                    "hint": "Create 'homework-files' bucket in Supabase Storage and make it public"
+                }), 500
+            
+            # Другие ошибки
+            print("=" * 60)
+            raise
+        
+    except Exception as e:
+        print(f"ERROR uploading file: {str(e)}")
+        print(f"ERROR TYPE: {type(e).__name__}")
+        print("=" * 60)
+        return jsonify({"error": f"Ошибка загрузки файла: {str(e)}"}), 500
+
+# --- Раздача загруженных файлов (для обратной совместимости, если нужно) ---
+@app.route("/uploads/<filename>")
+def uploaded_file(filename):
+    """Отдаёт загруженные файлы из локальной папки (запасной вариант)"""
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 # --- API для логина по паролю ---
 @app.route("/api/login", methods=["POST"])

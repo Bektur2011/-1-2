@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../store/authStore";
 import { getHomework, addHomework, deleteHomework } from "../api/homework.api";
+import { uploadFile } from "../api/upload.api";
 import "../styles/homework.css";
 import "../styles/homework-mobile.css";
 import "../styles/animations.css";
@@ -11,6 +12,8 @@ export default function Homework() {
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // Загружаем ДЗ с бэкенда при открытии страницы
@@ -30,6 +33,26 @@ export default function Homework() {
     }
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Проверяем размер файла (макс 16MB)
+      if (file.size > 16 * 1024 * 1024) {
+        alert("Файл слишком большой! Максимальный размер: 16MB");
+        return;
+      }
+      setSelectedFile(file);
+      // Создаём превью для изображений
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setImageUrl(e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  };
+
   const add = async () => {
     if (!title || !desc) {
       alert("Заполните название и описание!");
@@ -37,14 +60,42 @@ export default function Homework() {
     }
     
     try {
-      const response = await addHomework(title, desc, imageUrl);
+      setUploading(true);
+      let finalImageUrl = imageUrl;
+      
+      // Если выбран файл, пытаемся загрузить его
+      if (selectedFile) {
+        try {
+          const uploadResult = await uploadFile(selectedFile);
+          finalImageUrl = uploadResult.url;
+        } catch (uploadError) {
+          console.error("Ошибка загрузки файла:", uploadError);
+          // Спрашиваем пользователя хочет ли он продолжить без фото
+          const continueWithout = window.confirm(
+            "Не удалось загрузить файл. Создать задание без фото?"
+          );
+          if (!continueWithout) {
+            setUploading(false);
+            return;
+          }
+          finalImageUrl = ""; // Создаём без фото
+        }
+      }
+      
+      const response = await addHomework(title, desc, finalImageUrl);
       setList([...list, response.data]);
       setTitle("");
       setDesc("");
       setImageUrl("");
+      setSelectedFile(null);
+      // Сбрасываем input file
+      const fileInput = document.querySelector('input[type="file"]');
+      if (fileInput) fileInput.value = '';
     } catch (err) {
       console.error("Ошибка при добавлении ДЗ:", err);
-      alert("Ошибка при добавлении задания");
+      alert("Ошибка при добавлении задания. Проверьте подключение к базе данных.");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -111,17 +162,56 @@ export default function Homework() {
             </div>
             <div className="form-row full">
               <div className="form-group">
-                <label>📷 Ссылка на фото (необязательно)</label>
+                <label>🖼️ Ссылка на изображение (необязательно)</label>
                 <input
                   type="text"
-                  placeholder="https://example.com/image.jpg"
+                  placeholder="Вставьте ссылку на изображение (например, https://...)"
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
+                  disabled={selectedFile !== null}
                 />
               </div>
             </div>
-            <button className="btn-add animate-glow" onClick={add}>
-              ➕ Добавить задание
+            <div className="form-row full">
+              <div className="form-group">
+                <label>📎 Или загрузите файл (необязательно)</label>
+                <input
+                  type="file"
+                  accept="image/*,.pdf,.doc,.docx,.txt"
+                  onChange={handleFileChange}
+                  className="file-input"
+                  disabled={imageUrl !== "" && !selectedFile}
+                />
+                {selectedFile && (
+                  <div className="file-preview">
+                    <span className="file-name">📄 {selectedFile.name}</span>
+                    <button 
+                      className="btn-remove-file" 
+                      onClick={() => {
+                        setSelectedFile(null);
+                        setImageUrl("");
+                        const fileInput = document.querySelector('input[type="file"]');
+                        if (fileInput) fileInput.value = '';
+                      }}
+                      title="Удалить файл"
+                    >
+                      ✖
+                    </button>
+                  </div>
+                )}
+                {imageUrl && selectedFile && selectedFile.type.startsWith('image/') && (
+                  <div className="image-preview">
+                    <img src={imageUrl} alt="Preview" />
+                  </div>
+                )}
+              </div>
+            </div>
+            <button 
+              className="btn-add animate-glow" 
+              onClick={add}
+              disabled={uploading}
+            >
+              {uploading ? "⏳ Загрузка..." : "➕ Добавить задание"}
             </button>
           </div>
         )}
