@@ -23,6 +23,13 @@ export default function Homework() {
       setList(response.data);
     } catch (err) {
       console.error("Ошибка загрузки ДЗ:", err);
+      
+      // Показываем ошибку если это не просто пустая таблица
+      if (err.response?.status !== 404) {
+        const errorMessage = err.response?.data?.error || err.message || "Не удалось загрузить задания";
+        console.error("Детали ошибки:", errorMessage);
+      }
+      
       setList([]);
     } finally {
       setLoading(false);
@@ -40,9 +47,20 @@ export default function Homework() {
       setList([...list, response.data]);
       setTitle("");
       setDesc("");
+      alert("✅ Задание успешно добавлено!");
     } catch (err) {
       console.error("Ошибка при добавлении ДЗ:", err);
-      alert("Ошибка при добавлении задания. Проверьте подключение к базе данных.");
+      
+      // Показываем более детальное сообщение об ошибке
+      const errorMessage = err.response?.data?.error || err.message || "Неизвестная ошибка";
+      const errorHint = err.response?.data?.hint || "";
+      
+      let alertMessage = `❌ Ошибка при добавлении задания:\n${errorMessage}`;
+      if (errorHint) {
+        alertMessage += `\n\n💡 Подсказка: ${errorHint}`;
+      }
+      
+      alert(alertMessage);
     }
   };
 
