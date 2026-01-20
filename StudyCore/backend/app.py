@@ -210,19 +210,75 @@ def init_users():
 # --- API для домашнего задания ---
 @app.route("/api/homework", methods=["GET"])
 def get_homework():
-    response = supabase.table('homework').select('*').execute()
-    return jsonify(response.data)
+    try:
+        print("=" * 60)
+        print("FETCHING HOMEWORK FROM SUPABASE")
+        print("=" * 60)
+        response = supabase.table('homework').select('*').execute()
+        print(f"Homework count: {len(response.data) if response.data else 0}")
+        print("=" * 60)
+        return jsonify(response.data)
+    except Exception as e:
+        print(f"ERROR fetching homework: {str(e)}")
+        print(f"ERROR TYPE: {type(e).__name__}")
+        print("=" * 60)
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/api/homework", methods=["POST"])
 def add_homework():
-    data = request.json
-    response = supabase.table('homework').insert(data).execute()
-    return jsonify(response.data[0]), 201
+    try:
+        data = request.json
+        print("=" * 60)
+        print("ADDING HOMEWORK TO SUPABASE")
+        print("=" * 60)
+        print(f"Data received: {data}")
+        print(f"Title: {data.get('title')}")
+        print(f"Description: {data.get('description')}")
+        
+        if not data.get('title') or not data.get('description'):
+            print("ERROR: Missing title or description")
+            print("=" * 60)
+            return jsonify({"error": "Title and description are required"}), 400
+        
+        response = supabase.table('homework').insert(data).execute()
+        print(f"SUCCESS: Homework added with ID: {response.data[0].get('id') if response.data else 'unknown'}")
+        print("=" * 60)
+        return jsonify(response.data[0]), 201
+        
+    except Exception as e:
+        print(f"ERROR adding homework: {str(e)}")
+        print(f"ERROR TYPE: {type(e).__name__}")
+        
+        # Проверяем специфичные ошибки
+        error_message = str(e).lower()
+        if "column" in error_message or "schema" in error_message:
+            print("⚠️  HINT: Table 'homework' may not exist or has wrong structure!")
+            print("⚠️  See SUPABASE_HOMEWORK_FIX.md for SQL to create the table")
+        elif "row-level security" in error_message or "policy" in error_message:
+            print("⚠️  HINT: Row Level Security (RLS) is blocking INSERT!")
+            print("⚠️  Disable RLS or create policy for table 'homework'")
+        
+        print("=" * 60)
+        return jsonify({
+            "error": "Ошибка при добавлении задания",
+            "details": str(e),
+            "hint": "См. SUPABASE_HOMEWORK_FIX.md"
+        }), 500
 
 @app.route("/api/homework/<int:hw_id>", methods=["DELETE"])
 def delete_homework(hw_id):
-    supabase.table('homework').delete().eq('id', hw_id).execute()
-    return jsonify({"message": "Задание удалено"}), 200
+    try:
+        print("=" * 60)
+        print(f"DELETING HOMEWORK ID: {hw_id}")
+        print("=" * 60)
+        supabase.table('homework').delete().eq('id', hw_id).execute()
+        print(f"SUCCESS: Homework {hw_id} deleted")
+        print("=" * 60)
+        return jsonify({"message": "Задание удалено"}), 200
+    except Exception as e:
+        print(f"ERROR deleting homework: {str(e)}")
+        print("=" * 60)
+        return jsonify({"error": str(e)}), 500
 
 # --- Раздача фронтенда ---
 @app.route("/", defaults={"path": ""})
