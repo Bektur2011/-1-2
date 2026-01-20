@@ -64,17 +64,44 @@ def login():
         return jsonify({"error": "Пароль не указан"}), 400
     
     try:
-        # Запрос к Supabase
-        print(f"Searching user in Supabase with password: '{password}'")
+        # СНАЧАЛА получаем всех пользователей для отладки
+        print("STEP 1: Fetching ALL users from Supabase...")
+        all_users_response = supabase.table('users').select('*').execute()
+        print(f"Total users in database: {len(all_users_response.data) if all_users_response.data else 0}")
+        
+        if all_users_response.data:
+            print("Sample passwords in database:")
+            for user in all_users_response.data[:5]:
+                db_password = user.get('password', '')
+                print(f"  - User '{user.get('login')}' has password: '{db_password}' (length: {len(db_password)})")
+        else:
+            print("⚠️  WARNING: Supabase table 'users' is EMPTY!")
+            print("⚠️  You need to run POST /api/init-users to load data!")
+            print("=" * 60)
+            return jsonify({
+                "error": "Database is empty. Contact administrator.",
+                "hint": "Run POST /api/init-users to initialize data"
+            }), 500
+        
+        # ТЕПЕРЬ ищем пользователя по паролю
+        print(f"\nSTEP 2: Searching user with password: '{password}' (length: {len(password)})")
         response = supabase.table('users').select('*').eq('password', password).execute()
         
         # Логируем результат запроса
         print(f"Supabase response data type: {type(response.data)}")
         print(f"Supabase response data length: {len(response.data) if response.data else 0}")
         
-        # Проверяем результат (response.data - это массив)
+        # Дополнительная отладка: проверяем точное совпадение
         if not response.data:
-            print("LOGIN FAILED: No user found with this password")
+            print("\n⚠️  LOGIN FAILED: No user found with this password")
+            print("Comparing entered password with all passwords in database:")
+            for user in all_users_response.data:
+                db_pwd = user.get('password', '')
+                if db_pwd == password:
+                    print(f"  ✓ EXACT MATCH FOUND with user {user.get('login')}!")
+                elif db_pwd.strip() == password.strip():
+                    print(f"  ⚠️  Match after strip() with user {user.get('login')}")
+                    print(f"     DB password: '{db_pwd}' vs Input: '{password}'")
             print("=" * 60)
             return jsonify({"error": "Неверный пароль"}), 401
         
@@ -110,11 +137,75 @@ def login():
         print("=" * 60)
         return jsonify({"error": "Ошибка сервера"}), 500
 
-# --- API для получения всех пользователей ---
+# --- API для получения всех пользователей (с детальным логированием) ---
 @app.route("/api/users", methods=["GET"])
 def get_users():
-    response = supabase.table('users').select('*').execute()
-    return jsonify(response.data)
+    try:
+        print("=" * 60)
+        print("FETCHING ALL USERS FROM SUPABASE")
+        print("=" * 60)
+        response = supabase.table('users').select('*').execute()
+        print(f"Users count: {len(response.data) if response.data else 0}")
+        if response.data:
+            print("Sample user passwords:")
+            for user in response.data[:3]:  # Print first 3 users
+                print(f"  - {user.get('login')}: '{user.get('password')}'")
+        else:
+            print("WARNING: No users found in Supabase table!")
+        print("=" * 60)
+        return jsonify(response.data)
+    except Exception as e:
+        print(f"ERROR fetching users: {str(e)}")
+        print("=" * 60)
+        return jsonify({"error": str(e)}), 500
+
+# --- API для загрузки данных из users.json в Supabase (ТОЛЬКО ДЛЯ ИНИЦИАЛИЗАЦИИ!) ---
+@app.route("/api/init-users", methods=["POST"])
+def init_users():
+    """
+    Загружает пользователей из users.json в Supabase.
+    ВНИМАНИЕ: Используйте ТОЛЬКО один раз для инициализации!
+    """
+    try:
+        import json
+        users_file_path = os.path.join(os.path.dirname(__file__), "data", "users.json")
+        
+        # Проверяем, существует ли файл
+        if not os.path.exists(users_file_path):
+            return jsonify({"error": "users.json not found"}), 404
+        
+        # Читаем файл
+        with open(users_file_path, 'r', encoding='utf-8') as f:
+            users = json.load(f)
+        
+        print("=" * 60)
+        print(f"INITIALIZING SUPABASE WITH {len(users)} USERS")
+        print("=" * 60)
+        
+        # Сначала проверяем, есть ли уже пользователи
+        existing = supabase.table('users').select('id').execute()
+        if existing.data and len(existing.data) > 0:
+            print(f"WARNING: Table already contains {len(existing.data)} users")
+            return jsonify({
+                "error": "Table already contains users. Clear it first if you want to reinitialize.",
+                "existing_count": len(existing.data)
+            }), 400
+        
+        # Вставляем всех пользователей
+        response = supabase.table('users').insert(users).execute()
+        
+        print(f"SUCCESS: Inserted {len(response.data)} users")
+        print("=" * 60)
+        
+        return jsonify({
+            "message": "Users initialized successfully",
+            "count": len(response.data)
+        }), 200
+        
+    except Exception as e:
+        print(f"ERROR initializing users: {str(e)}")
+        print("=" * 60)
+        return jsonify({"error": str(e)}), 500
 
 # --- API для домашнего задания ---
 @app.route("/api/homework", methods=["GET"])
