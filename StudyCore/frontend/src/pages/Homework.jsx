@@ -43,6 +43,7 @@ export default function Homework() {
     }
     
     try {
+      // Отправляем пустую строку для image_url если фото нет
       const response = await addHomework(title, desc, "");
       setList([...list, response.data]);
       setTitle("");
@@ -50,14 +51,28 @@ export default function Homework() {
       alert("✅ Задание успешно добавлено!");
     } catch (err) {
       console.error("Ошибка при добавлении ДЗ:", err);
+      console.error("Детали ошибки:", err.response?.data);
       
       // Показываем более детальное сообщение об ошибке
-      const errorMessage = err.response?.data?.error || err.message || "Неизвестная ошибка";
-      const errorHint = err.response?.data?.hint || "";
+      const errorData = err.response?.data || {};
+      const errorMessage = errorData.error || err.message || "Неизвестная ошибка";
+      const errorHint = errorData.hint || "";
+      const fixFile = errorData.fix_file || "";
       
-      let alertMessage = `❌ Ошибка при добавлении задания:\n${errorMessage}`;
+      let alertMessage = `❌ ${errorMessage}`;
+      
       if (errorHint) {
-        alertMessage += `\n\n💡 Подсказка: ${errorHint}`;
+        alertMessage += `\n\n💡 Решение:\n${errorHint}`;
+      }
+      
+      if (fixFile) {
+        alertMessage += `\n\n📄 Инструкция: ${fixFile}`;
+      }
+      
+      // Добавляем информацию для разработчика
+      if (errorData.details) {
+        console.error("Техническая ошибка:", errorData.details);
+        alertMessage += `\n\n🔧 Для разработчика: смотрите консоль (F12)`;
       }
       
       alert(alertMessage);

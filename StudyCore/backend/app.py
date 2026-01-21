@@ -363,38 +363,84 @@ def add_homework():
         print("=" * 60)
         print("ADDING HOMEWORK TO SUPABASE")
         print("=" * 60)
-        print(f"Data received: {data}")
-        print(f"Title: {data.get('title')}")
-        print(f"Description: {data.get('description')}")
+        print(f"Raw data received: {data}")
         
+        # Валидация обязательных полей
         if not data.get('title') or not data.get('description'):
             print("ERROR: Missing title or description")
             print("=" * 60)
             return jsonify({"error": "Title and description are required"}), 400
         
-        response = supabase.table('homework').insert(data).execute()
+        # Подготовка данных для вставки
+        homework_data = {
+            "title": data.get('title'),
+            "description": data.get('description')
+        }
+        
+        # Добавляем image_url только если он не пустой
+        # Это важно, т.к. пустая строка может вызвать ошибку в Supabase
+        image_url = data.get('image_url', '').strip()
+        if image_url:
+            homework_data['image_url'] = image_url
+            print(f"Image URL provided: {image_url}")
+        else:
+            print("No image URL (will be NULL in database)")
+        
+        print(f"Title: {homework_data['title']}")
+        print(f"Description: {homework_data['description']}")
+        print(f"Data to insert: {homework_data}")
+        
+        # Вставляем данные
+        response = supabase.table('homework').insert(homework_data).execute()
+        
         print(f"SUCCESS: Homework added with ID: {response.data[0].get('id') if response.data else 'unknown'}")
         print("=" * 60)
         return jsonify(response.data[0]), 201
         
     except Exception as e:
-        print(f"ERROR adding homework: {str(e)}")
+        error_str = str(e)
+        print(f"ERROR adding homework: {error_str}")
         print(f"ERROR TYPE: {type(e).__name__}")
         
-        # Проверяем специфичные ошибки
-        error_message = str(e).lower()
-        if "column" in error_message or "schema" in error_message:
-            print("⚠️  HINT: Table 'homework' may not exist or has wrong structure!")
-            print("⚠️  See SUPABASE_HOMEWORK_FIX.md for SQL to create the table")
-        elif "row-level security" in error_message or "policy" in error_message:
+        # Проверяем специфичные ошибки и даём подробные подсказки
+        error_message_lower = error_str.lower()
+        
+        hint = None
+        user_friendly_error = "Ошибка при добавлении задания"
+        
+        if "relation" in error_message_lower and "does not exist" in error_message_lower:
+            hint = "Таблица 'homework' не существует в Supabase. Выполните SQL из файла ИСПРАВЛЕНИЕ_ДЗ.md"
+            user_friendly_error = "Таблица homework не создана в базе данных"
+            print("⚠️  HINT: Table 'homework' DOES NOT EXIST in Supabase!")
+            print("⚠️  FIX: Open ИСПРАВЛЕНИЕ_ДЗ.md and run the SQL script")
+            
+        elif "column" in error_message_lower and "does not exist" in error_message_lower:
+            hint = "В таблице homework отсутствует нужная колонка. Пересоздайте таблицу используя SQL из ИСПРАВЛЕНИЕ_ДЗ.md"
+            user_friendly_error = "Структура таблицы homework неправильная"
+            print("⚠️  HINT: Table 'homework' has wrong structure (missing column)!")
+            print("⚠️  FIX: Run SQL from ИСПРАВЛЕНИЕ_ДЗ.md to recreate the table")
+            
+        elif "row-level security" in error_message_lower or "policy" in error_message_lower:
+            hint = "Row Level Security блокирует добавление. Выполните: ALTER TABLE homework DISABLE ROW LEVEL SECURITY;"
+            user_friendly_error = "Доступ к базе данных заблокирован (RLS)"
             print("⚠️  HINT: Row Level Security (RLS) is blocking INSERT!")
-            print("⚠️  Disable RLS or create policy for table 'homework'")
+            print("⚠️  FIX: Disable RLS using SQL from ИСПРАВЛЕНИЕ_ДЗ.md")
+            
+        elif "duplicate" in error_message_lower or "unique" in error_message_lower:
+            hint = "Такое задание уже существует"
+            user_friendly_error = "Дубликат задания"
+            
+        else:
+            hint = "Проверьте что таблица homework создана в Supabase. См. файл ИСПРАВЛЕНИЕ_ДЗ.md"
+            print("⚠️  HINT: Unknown error. Check that 'homework' table exists and has correct structure")
+            print("⚠️  See SUPABASE_HOMEWORK_FIX.md or ИСПРАВЛЕНИЕ_ДЗ.md for setup instructions")
         
         print("=" * 60)
         return jsonify({
-            "error": "Ошибка при добавлении задания",
-            "details": str(e),
-            "hint": "См. SUPABASE_HOMEWORK_FIX.md"
+            "error": user_friendly_error,
+            "hint": hint,
+            "details": error_str,
+            "fix_file": "ИСПРАВЛЕНИЕ_ДЗ.md"
         }), 500
 
 @app.route("/api/homework/<int:hw_id>", methods=["DELETE"])
