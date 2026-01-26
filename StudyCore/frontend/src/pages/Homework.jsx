@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../store/authStore";
 import { getHomework, addHomework, deleteHomework } from "../api/homework.api";
-import "../styles/homework.css";
-import "../styles/homework-mobile.css";
-import "../styles/animations.css";
+import "../styles/new-homework.css";
+import "../styles/new-animations.css";
 
 export default function Homework() {
   const user = useAuth((state) => state.user);
@@ -109,17 +108,14 @@ export default function Homework() {
 
   return (
     <div className="homework-page">
-      {/* Animated background */}
-      <div className="particles-bg"></div>
-      
       <div className="homework-container">
-        <div className="homework-header animate-zoom-in">
-          <h2 className="animate-neon">📚 Домашние задания</h2>
+        <div className="homework-header animate-fade-in-down">
+          <h2>📚 Домашние задания</h2>
         </div>
 
         {/* Форма добавления - видна только для модераторов и админов */}
         {canAddHomework && (
-          <div className="homework-form animate-bounce-in">
+          <div className="homework-form animate-scale-in delay-100">
             <div className="form-row">
               <div className="form-group">
                 <label>Название задания</label>
@@ -150,11 +146,11 @@ export default function Homework() {
         )}
 
         {list.length === 0 ? (
-          <div className="empty-message animate-fade-in">Заданий пока нет</div>
+          <div className="empty-message animate-fade-in-up">Заданий пока нет</div>
         ) : (
           <div className="homework-list">
             {list.map((h, index) => (
-              <div key={h.id} className="homework-item animate-bounce-in" style={{ animationDelay: `${index * 0.1}s` }}>
+              <div key={h.id} className={`homework-item animate-scale-in delay-${Math.min(index, 5)}00`}>
                 {/* Фото задания (если есть) */}
                 {h.image_url && (
                   <div className="homework-image">

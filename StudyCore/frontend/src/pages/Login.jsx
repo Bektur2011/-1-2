@@ -3,9 +3,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../store/authStore";
 import { loginRequest } from "../api/auth.api";
-import "../styles/global.css";
-import "../styles/animations.css";
-import "../styles/login.css";
+import "../styles/new-global.css";
+import "../styles/new-animations.css";
+import "../styles/new-login.css";
 
 const Login = () => {
   const [password, setPassword] = useState(""); // состояние пароля

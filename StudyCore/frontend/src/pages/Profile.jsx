@@ -1,7 +1,8 @@
 import React from "react";
 import { useAuth } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
-import "../styles/profile.css";
+import "../styles/new-profile.css";
+import "../styles/new-animations.css";
 
 const Profile = () => {
   const user = useAuth((state) => state.user);
@@ -16,12 +17,12 @@ const Profile = () => {
   return (
     <div className="profile-page">
       <div className="profile-container">
-        <div className="profile-header">
+        <div className="profile-header animate-fade-in-down">
           <h2>Мой профиль</h2>
         </div>
 
-        <div className="profile-card">
-          <div className="profile-avatar">👤</div>
+        <div className="profile-card animate-scale-in delay-100">
+          <div className="profile-avatar animate-pulse">👤</div>
           <div className="profile-info">
             {user ? (
               <>

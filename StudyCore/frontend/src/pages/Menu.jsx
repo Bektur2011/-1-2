@@ -1,9 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../store/authStore";
-import "../styles/menu.css";
-import "../styles/menu-mobile.css";
-import "../styles/animations.css";
+import "../styles/new-menu.css";
+import "../styles/new-animations.css";
 
 const Menu = () => {
   const user = useAuth((state) => state.user);
@@ -17,25 +16,22 @@ const Menu = () => {
 
   return (
     <div className="menu-page">
-      {/* Animated background */}
-      <div className="particles-bg"></div>
-      
       <div className="menu-container">
-        <div className="menu-header animate-zoom-in">
-          <h2 className="animate-neon">Главное меню</h2>
+        <div className="menu-header animate-fade-in-down">
+          <h2>Главное меню</h2>
           {user && (
-            <p className="animate-fade-in">
+            <p>
               Добро пожаловать, <strong>{user.name}</strong>
-              <span className="role-badge animate-pulse">{user.role}</span>
+              <span className="role-badge">{user.role}</span>
             </p>
           )}
         </div>
         <nav>
           <ul className="menu-nav">
             {menuItems.map((item, index) => (
-              <li key={item.to} className="animate-bounce-in" style={{ animationDelay: item.delay }}>
+              <li key={item.to} className={`animate-scale-in delay-${index}00`}>
                 <Link to={item.to}>
-                  <span className={`menu-icon ${item.icon} animate-float`}></span>
+                  <span className={`menu-icon ${item.icon}`}></span>
                   <span>{item.label}</span>
                 </Link>
               </li>

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../store/authStore";
 import { getUsers } from "../api/users.api";
-import "../styles/journal.css";
-import "../styles/animations.css";
+import "../styles/new-journal.css";
+import "../styles/new-animations.css";
 
 const Journal = () => {
   const user = useAuth((state) => state.user);
@@ -58,38 +58,15 @@ const Journal = () => {
 
   return (
     <div className="journal-page">
-      {/* Animated background */}
-      <div className="particles-bg"></div>
-      
       <div className="journal-container">
-        <div className="journal-header animate-zoom-in">
-          <h2 className="animate-neon">📖 Журнал учеников</h2>
-          {user && <p className="animate-fade-in">Добро пожаловать, {user.role} {user.name}!</p>}
-        </div>
-
-        <div className="stats-row">
-          <div className="stat-card animate-bounce-in" style={{ animationDelay: '0s' }}>
-            <div className="stat-card-number animate-pulse">{stats.total}</div>
-            <div className="stat-card-label">Всего пользователей</div>
-          </div>
-          <div className="stat-card animate-bounce-in" style={{ animationDelay: '0.1s' }}>
-            <div className="stat-card-number animate-pulse">{stats.students}</div>
-            <div className="stat-card-label">Студентов</div>
-          </div>
-          <div className="stat-card animate-bounce-in" style={{ animationDelay: '0.2s' }}>
-            <div className="stat-card-number animate-pulse">{stats.moderators}</div>
-            <div className="stat-card-label">Модераторов</div>
-          </div>
-          <div className="stat-card animate-bounce-in" style={{ animationDelay: '0.3s' }}>
-            <div className="stat-card-number animate-pulse">{stats.admins}</div>
-            <div className="stat-card-label">Администраторов</div>
-          </div>
+        <div className="journal-header animate-fade-in-down">
+          <h2>📖 Журнал учеников</h2>
         </div>
 
         {users.length === 0 ? (
-          <div className="empty-message animate-fade-in">Пользователей пока нет</div>
+          <div className="empty-table animate-fade-in-up">Пользователей пока нет</div>
         ) : (
-          <div className="journal-table-wrapper animate-fade-in">
+          <div className="table-container animate-scale-in delay-100">
             <table className="journal-table">
               <thead>
                 <tr>
@@ -98,23 +75,22 @@ const Journal = () => {
                   <th>Имя</th>
                   <th>Роль</th>
                   <th>Пол</th>
+                  <th>Статус</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map((u, index) => (
-                  <tr key={u.id} className="animate-slide-up" style={{ animationDelay: `${index * 0.05}s` }}>
+                  <tr key={u.id}>
                     <td>{u.id}</td>
                     <td>{u.login}</td>
                     <td>
-                      <span className="gender-icon">{getGenderIcon(u.gender)}</span>
-                      {u.name}
+                      {getGenderIcon(u.gender)} {u.name}
                     </td>
-                    <td>
-                      <span className={`role-badge ${getRoleBadgeClass(u.role)}`}>
-                        {u.role}
-                      </span>
-                    </td>
+                    <td>{u.role}</td>
                     <td>{u.gender === "Female" ? "Женский" : "Мужской"}</td>
+                    <td>
+                      <span className="status-badge active">Активен</span>
+                    </td>
                   </tr>
                 ))}
               </tbody>

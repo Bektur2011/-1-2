@@ -1,0 +1,173 @@
+/* 📖 JOURNAL PAGE - Футуристичный журнал */
+
+.journal-page {
+  min-height: 100vh;
+  padding: 2rem;
+  position: relative;
+}
+
+.journal-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* Header */
+.journal-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.journal-header h2 {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--neon-blue), var(--neon-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0;
+}
+
+/* Table Container */
+.table-container {
+  background: var(--glass-white);
+  backdrop-filter: var(--blur-lg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  overflow-x: auto;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Table */
+.journal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.journal-table thead {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: var(--blur-sm);
+}
+
+.journal-table th {
+  padding: 1rem 1.25rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-white);
+  border-bottom: 2px solid var(--neon-blue);
+  white-space: nowrap;
+}
+
+.journal-table tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all var(--transition-fast);
+}
+
+.journal-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.journal-table td {
+  padding: 1rem 1.25rem;
+  color: var(--text-light);
+}
+
+.journal-table td:first-child {
+  font-weight: 600;
+  color: var(--text-white);
+}
+
+/* Status badge */
+.status-badge {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--glass-white);
+  backdrop-filter: var(--blur-sm);
+  border: 1px solid var(--glass-border);
+}
+
+.status-badge.active {
+  border-color: #4ade80;
+  color: #4ade80;
+  background: rgba(74, 222, 128, 0.1);
+}
+
+.status-badge.inactive {
+  border-color: #94a3b8;
+  color: #94a3b8;
+  background: rgba(148, 163, 184, 0.1);
+}
+
+/* Empty state */
+.empty-table {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+/* Mobile */
+@media (max-width: 1024px) {
+  .table-container {
+    overflow-x: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .journal-table {
+    min-width: 800px;
+  }
+}
+
+@media (max-width: 768px) {
+  .journal-page {
+    padding: 1.5rem 1rem;
+  }
+  
+  .table-container {
+    padding: 1rem;
+  }
+  
+  .journal-table th,
+  .journal-table td {
+    padding: 0.875rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .journal-page {
+    padding: 1rem 0.75rem;
+  }
+  
+  .table-container {
+    padding: 0.875rem;
+    border-radius: var(--radius-md);
+  }
+  
+  .journal-table th,
+  .journal-table td {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.85rem;
+  }
+  
+  .journal-table {
+    min-width: 700px;
+  }
+}
+
+/* iOS fixes */
+@supports (-webkit-touch-callout: none) {
+  .journal-page {
+    min-height: -webkit-fill-available;
+  }
+  
+  .table-container {
+    -webkit-overflow-scrolling: touch;
+  }
+}

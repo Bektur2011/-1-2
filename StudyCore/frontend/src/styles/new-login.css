@@ -1,0 +1,340 @@
+/* 🔐 LOGIN PAGE - Футуристичный вход */
+
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated particles background */
+.login-page .particles-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.login-page .particles-bg::before,
+.login-page .particles-bg::after {
+  content: '';
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+  animation: float 6s ease-in-out infinite;
+}
+
+.login-page .particles-bg::before {
+  top: 10%;
+  left: 10%;
+  background: var(--neon-blue);
+}
+
+.login-page .particles-bg::after {
+  bottom: 10%;
+  right: 10%;
+  background: var(--neon-pink);
+  animation-delay: -3s;
+}
+
+/* Welcome banner */
+.welcome-banner {
+  text-align: center;
+  margin-bottom: 3rem;
+  z-index: 1;
+}
+
+.welcome-banner h1 {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--neon-blue), var(--neon-pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1rem;
+  letter-spacing: -0.03em;
+}
+
+.welcome-banner p {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Login card */
+.login-card {
+  background: var(--glass-white);
+  backdrop-filter: var(--blur-xl);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  padding: 3rem 2.5rem;
+  box-shadow: var(--shadow-xl);
+  max-width: 420px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--primary-gradient);
+}
+
+.login-icon {
+  font-size: 3rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  filter: drop-shadow(0 0 10px rgba(79, 172, 254, 0.5));
+}
+
+.login-card h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--text-white);
+}
+
+/* Input wrapper */
+.input-wrapper {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.login-input {
+  width: 100%;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-border);
+  background: var(--glass-white);
+  backdrop-filter: var(--blur-md);
+  color: var(--text-white);
+  font-size: 1rem;
+  transition: all var(--transition-normal);
+}
+
+.login-input:focus {
+  border-color: var(--neon-blue);
+  background: var(--glass-white-hover);
+  box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1), var(--shadow-neon);
+}
+
+.input-underline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--primary-gradient);
+  transition: width var(--transition-normal);
+}
+
+.login-input:focus + .input-underline {
+  width: 100%;
+}
+
+/* Login button */
+.login-button {
+  width: 100%;
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  background: var(--primary-gradient);
+  background-size: 200% 200%;
+  border: none;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: 0 8px 24px rgba(79, 172, 254, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-button:hover:not(:disabled) {
+  background-position: right center;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(79, 172, 254, 0.4), var(--shadow-neon);
+}
+
+.login-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.login-button.loading {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.button-icon {
+  font-size: 1.5rem;
+  transition: transform var(--transition-normal);
+}
+
+.login-button:hover .button-icon {
+  transform: translateX(4px);
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: rotate 0.6s linear infinite;
+}
+
+/* Login footer */
+.login-footer {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.login-footer p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* Toast notification */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  min-width: 320px;
+  max-width: 420px;
+  padding: 1.25rem 1.5rem;
+  border-radius: var(--radius-md);
+  background: var(--glass-white);
+  backdrop-filter: var(--blur-lg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-xl), var(--shadow-neon);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  opacity: 0;
+  transform: translateX(400px);
+  transition: all var(--transition-normal);
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.toast-icon {
+  font-size: 1.5rem;
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+.toast-message {
+  flex: 1;
+  color: var(--text-white);
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.toast-close {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  width: auto;
+  min-height: auto;
+  box-shadow: none;
+}
+
+.toast-close:hover {
+  background: var(--glass-white-hover);
+  color: var(--text-white);
+  box-shadow: none;
+  transform: none;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .login-page {
+    padding: 1.5rem 1rem;
+    justify-content: flex-start;
+    padding-top: 15vh;
+  }
+  
+  .welcome-banner {
+    margin-bottom: 2rem;
+  }
+  
+  .welcome-banner h1 {
+    font-size: 2.5rem;
+  }
+  
+  .login-card {
+    padding: 2rem 1.5rem;
+  }
+  
+  .login-icon {
+    font-size: 2.5rem;
+  }
+  
+  .login-input,
+  .login-button {
+    padding: 1rem 1.25rem;
+    font-size: 16px; /* Prevent iOS zoom */
+  }
+  
+  .toast {
+    right: 1rem;
+    left: 1rem;
+    bottom: 1.5rem;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-page {
+    padding-top: 10vh;
+  }
+  
+  .welcome-banner h1 {
+    font-size: 2rem;
+  }
+  
+  .login-card {
+    padding: 1.75rem 1.25rem;
+  }
+}
+
+/* iOS fixes */
+@supports (-webkit-touch-callout: none) {
+  .login-input {
+    -webkit-appearance: none;
+    font-size: 16px;
+  }
+  
+  .login-page {
+    min-height: -webkit-fill-available;
+  }
+}

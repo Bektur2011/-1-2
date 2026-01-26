@@ -3,7 +3,7 @@
 
   { "id": 2, "login": "bb34_15", "password": "9XK4D7S2", "name": "Даткайым", "role": "Admin", "gender": "Female" },
   { "id": 3, "login": "bb34_16", "password": "F6RZ8C5M", "name": "Аяна", "role": "Admin", "gender": "Female" },
-  { "id": 4, "login": "bb34_17", "password": "7QX2A9LJ", "name": "Сабина", "role": "Admin", "gender": "Female" },
+  { "id": 4, "login": "bb34_17", "password": "7QX2A9LJ", "name": "Сабина", "role": "Student", "gender": "Female" },
   { "id": 5, "login": "bb34_01", "password": "X7fA9qL2", "name": "Мырзабек", "role": "Student", "gender": "Male" },
   { "id": 6, "login": "bb34_02", "password": "mP4Z8RkQ", "name": "Алинур", "role": "Student", "gender": "Male" },
   { "id": 7, "login": "bb34_03", "password": "9DqT6WbE", "name": "Биймырза", "role": "Student", "gender": "Male" },
