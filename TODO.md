@@ -1,9 +1,8 @@
-# TODO: Refactor StudyCore to use Supabase
+# TODO: Improve Quick Access Menu on Mobile
 
-- [x] Create .env file with Supabase credentials (placeholders)
-- [x] Update requirements.txt with supabase-py
-- [x] Rewrite app.py to use Supabase SDK
-- [ ] Ensure frontend API calls work with new backend
-- [ ] Test authentication and data persistence
-- [ ] Verify role-based access control
-- [ ] Confirm deployment readiness
+## Tasks
+- [x] Modify CSS for mobile: Change quick-actions to horizontal layout (keep rectangular shape)
+- [x] Hide text labels on mobile, show only icons
+- [x] Make buttons more compact (smaller padding, height)
+- [x] Improve styling: Add gradients, better shadows, modern look
+- [x] Test on mobile view to ensure it's not obstructive
