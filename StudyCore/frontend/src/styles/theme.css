@@ -6,6 +6,14 @@
   --secondary-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
   --accent-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
   --dark-gradient: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  --error-gradient: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+  
+  /* Background Colors */
+  --bg-primary: #0f0c29;
+  --bg-secondary: #1a1a2e;
+  --bg-tertiary: #16213e;
+  --bg-overlay: rgba(15, 12, 41, 0.9);
   
   /* Glass Colors */
   --glass-white: rgba(255, 255, 255, 0.1);
@@ -19,12 +27,15 @@
   --neon-pink: #f093fb;
   --neon-cyan: #00f2fe;
   --neon-orange: #fee140;
+  --neon-green: #38ef7d;
+  --neon-red: #f45c43;
   
   /* Text Colors */
   --text-white: #ffffff;
   --text-light: rgba(255, 255, 255, 0.9);
   --text-muted: rgba(255, 255, 255, 0.7);
   --text-dark: #1a1a2e;
+  --text-disabled: rgba(255, 255, 255, 0.4);
   
   /* Shadows */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -33,6 +44,7 @@
   --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.25);
   --shadow-neon: 0 0 20px rgba(79, 172, 254, 0.5);
   --shadow-neon-pink: 0 0 20px rgba(240, 147, 251, 0.5);
+  --shadow-neon-green: 0 0 20px rgba(56, 239, 125, 0.5);
   
   /* Border Radius */
   --radius-sm: 8px;
@@ -47,6 +59,17 @@
   --space-md: 1.5rem;
   --space-lg: 2rem;
   --space-xl: 3rem;
+  --space-2xl: 4rem;
+  
+  /* Font Sizes */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
   
   /* Transitions */
   --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -58,6 +81,9 @@
   --blur-md: blur(12px);
   --blur-lg: blur(16px);
   --blur-xl: blur(24px);
+  
+  /* Touch Target (for mobile) */
+  --touch-target: 44px;
 }
 
 /* Dark mode adjustments */

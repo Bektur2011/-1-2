@@ -1,8 +1,9 @@
 import React from "react";
 import { useAuth } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
-import "../styles/new-profile.css";
-import "../styles/new-animations.css";
+import "../styles/modern-global.css";
+import "../styles/modern-animations.css";
+import "../styles/modern-profile.css";
 
 const Profile = () => {
   const user = useAuth((state) => state.user);
@@ -22,7 +23,9 @@ const Profile = () => {
         </div>
 
         <div className="profile-card animate-scale-in delay-100">
-          <div className="profile-avatar animate-pulse">👤</div>
+          <div className="profile-avatar animate-pulse">
+            {user?.gender === "Female" ? "👩" : "👨"}
+          </div>
           <div className="profile-info">
             {user ? (
               <>
@@ -33,12 +36,18 @@ const Profile = () => {
                     <div className="profile-field-value">{user.role}</div>
                   </div>
                   <div className="profile-field">
+                    <div className="profile-field-label">Пол</div>
+                    <div className="profile-field-value">
+                      {user.gender === "Female" ? "Женский" : "Мужской"}
+                    </div>
+                  </div>
+                  <div className="profile-field">
                     <div className="profile-field-label">Статус</div>
                     <div className="profile-field-value">✓ Активен</div>
                   </div>
                 </div>
                 <button className="btn-logout" onClick={handleLogout}>
-                  Выйти
+                  Выйти из системы
                 </button>
               </>
             ) : (

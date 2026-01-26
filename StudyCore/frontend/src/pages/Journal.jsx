@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../store/authStore";
 import { getUsers } from "../api/users.api";
-import "../styles/new-journal.css";
-import "../styles/new-animations.css";
+import "../styles/modern-global.css";
+import "../styles/modern-animations.css";
+import "../styles/modern-journal.css";
 
 const Journal = () => {
   const user = useAuth((state) => state.user);
@@ -23,13 +24,6 @@ const Journal = () => {
       });
   }, []);
 
-  const stats = {
-    total: users.length,
-    students: users.filter((u) => u.role === "Student").length,
-    moderators: users.filter((u) => u.role === "Moderator").length,
-    admins: users.filter((u) => u.role === "Admin").length,
-  };
-
   const getRoleBadgeClass = (role) => {
     switch (role) {
       case "Admin":
@@ -49,7 +43,7 @@ const Journal = () => {
     return (
       <div className="journal-page">
         <div className="loading-spinner">
-          <div className="spinner-icon animate-spin"></div>
+          <div className="spinner-icon"></div>
           <p>Загрузка данных...</p>
         </div>
       </div>
@@ -64,7 +58,9 @@ const Journal = () => {
         </div>
 
         {users.length === 0 ? (
-          <div className="empty-table animate-fade-in-up">Пользователей пока нет</div>
+          <div className="empty-table animate-fade-in-up">
+            Пользователей пока нет
+          </div>
         ) : (
           <div className="table-container animate-scale-in delay-100">
             <table className="journal-table">
@@ -79,14 +75,18 @@ const Journal = () => {
                 </tr>
               </thead>
               <tbody>
-                {users.map((u, index) => (
+                {users.map((u) => (
                   <tr key={u.id}>
                     <td>{u.id}</td>
                     <td>{u.login}</td>
                     <td>
                       {getGenderIcon(u.gender)} {u.name}
                     </td>
-                    <td>{u.role}</td>
+                    <td>
+                      <span className={`role-badge ${getRoleBadgeClass(u.role)}`}>
+                        {u.role}
+                      </span>
+                    </td>
                     <td>{u.gender === "Female" ? "Женский" : "Мужской"}</td>
                     <td>
                       <span className="status-badge active">Активен</span>

@@ -1,6 +1,7 @@
 import React from "react";
-import "../styles/new-ai.css";
-import "../styles/new-animations.css";
+import "../styles/modern-global.css";
+import "../styles/modern-animations.css";
+import "../styles/modern-ai.css";
 
 const AI = () => {
   return (
@@ -10,10 +11,23 @@ const AI = () => {
         <div className="ai-message animate-scale-in">
           <h2>Искусственный интеллект</h2>
           <p>
-            <strong>Эта функция в разработке</strong>
+            <strong>Эта функция находится в разработке</strong>
             <br /><br />
-            Мы активно работаем над интеграцией мощных ИИ инструментов для помощи в обучении
+            Мы активно работаем над интеграцией мощных ИИ-инструментов для помощи 
+            в обучении. Скоро вы сможете получать интеллектуальные рекомендации, 
+            помощь с домашними заданиями и персонализированные советы.
           </p>
+          
+          <div className="ai-features">
+            <h3>Планируемые возможности:</h3>
+            <ul>
+              <li>Автоматическая проверка заданий</li>
+              <li>Персональные рекомендации по обучению</li>
+              <li>Интеллектуальный помощник для решения задач</li>
+              <li>Анализ прогресса и успеваемости</li>
+            </ul>
+          </div>
+
           <div className="ai-loading">
             <span></span>
             <span></span>
