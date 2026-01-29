@@ -183,7 +183,7 @@
 
 @media (max-width: 768px) {
   .homework-page {
-    padding: 2rem 1rem 2rem 80px;
+    padding: 2rem 1rem 5rem 1rem; /* убираем отступ слева */
   }
   
   .homework-header h2 {
@@ -211,7 +211,7 @@
 
 @media (max-width: 480px) {
   .homework-page {
-    padding: 1.5rem 0.75rem 1.5rem 70px;
+    padding: 1.5rem 0.75rem 5rem 0.75rem; /* убираем отступ слева */
   }
   
   .homework-header h2 {
@@ -249,10 +249,17 @@
   }
 }
 
-/* Landscape mode */
-@media (max-height: 500px) and (orientation: landscape) {
+/* Landscape mode - desktop */
+@media (min-width: 769px) and (max-height: 500px) and (orientation: landscape) {
   .homework-page {
-    padding: 1rem 0.75rem 1rem 70px;
+    padding: 1rem 0.75rem 1rem 90px; /* sidebar слева */
+  }
+}
+
+/* Landscape mode - mobile */
+@media (max-width: 768px) and (max-height: 500px) and (orientation: landscape) {
+  .homework-page {
+    padding: 1rem 0.75rem 4rem 0.75rem; /* sidebar снизу */
   }
   
   .homework-header {

@@ -141,7 +141,7 @@
 
 @media (max-width: 768px) {
   .menu-page {
-    padding: 2rem 1rem 2rem 80px;
+    padding: 2rem 1rem 5rem 1rem; /* убираем отступ слева, добавляем снизу для bottom nav */
   }
   
   .menu-header {
@@ -179,7 +179,7 @@
 
 @media (max-width: 480px) {
   .menu-page {
-    padding: 1.5rem 0.75rem 1.5rem 70px;
+    padding: 1.5rem 0.75rem 5rem 0.75rem; /* убираем отступ слева, добавляем снизу */
   }
   
   .menu-header h2 {
@@ -216,7 +216,7 @@
 /* Landscape mode */
 @media (max-height: 500px) and (orientation: landscape) {
   .menu-page {
-    padding: 1rem 0.75rem 1rem 70px;
+    padding: 1rem 0.75rem 1rem 90px; /* на десктопе в landscape оставляем sidebar слева */
   }
   
   .menu-header {

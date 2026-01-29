@@ -109,7 +109,7 @@
 
 @media (max-width: 768px) {
   .profile-page {
-    padding: 2rem 1rem 2rem 80px;
+    padding: 2rem 1rem 5rem 1rem; /* убираем отступ слева, добавляем снизу */
   }
   
   .profile-header h2 {
@@ -140,7 +140,7 @@
 
 @media (max-width: 480px) {
   .profile-page {
-    padding: 1.5rem 0.75rem 1.5rem 70px;
+    padding: 1.5rem 0.75rem 5rem 0.75rem; /* убираем отступ слева */
   }
   
   .profile-header h2 {
@@ -178,10 +178,17 @@
   }
 }
 
-/* Landscape mode */
-@media (max-height: 500px) and (orientation: landscape) {
+/* Landscape mode - desktop */
+@media (min-width: 769px) and (max-height: 500px) and (orientation: landscape) {
   .profile-page {
-    padding: 1rem 0.75rem 1rem 70px;
+    padding: 1rem 0.75rem 1rem 90px; /* sidebar слева на десктопе */
+  }
+}
+
+/* Landscape mode - mobile */
+@media (max-width: 768px) and (max-height: 500px) and (orientation: landscape) {
+  .profile-page {
+    padding: 1rem 0.75rem 4rem 0.75rem; /* sidebar снизу на мобильном */
   }
   
   .profile-header {

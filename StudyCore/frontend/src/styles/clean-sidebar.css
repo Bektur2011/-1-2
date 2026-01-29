@@ -86,13 +86,58 @@
 /* Адаптивность */
 @media (max-width: 768px) {
   .sidebar {
-    width: 70px;
-    box-shadow: var(--shadow-lg);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-top: 1px solid var(--gray-200);
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    background: var(--white);
+  }
+  
+  .sidebar-nav {
+    flex-direction: row;
+    padding: 0;
+    gap: 0;
+    justify-content: space-around;
   }
   
   .nav-link {
-    padding: 0.875rem;
-    min-height: 52px;
+    flex: 1;
+    padding: 0.75rem;
+    min-height: 60px;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .nav-icon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .nav-link.active::before {
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+    width: 60%;
+    height: 3px;
+    border-radius: 0 0 3px 3px;
+  }
+  
+  /* Скрываем tooltip на мобильных */
+  .nav-link-tooltip {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-link {
+    padding: 0.625rem 0.5rem;
+    min-height: 56px;
   }
   
   .nav-icon {
@@ -101,26 +146,10 @@
   }
 }
 
-@media (max-width: 480px) {
+/* Landscape mode - desktop (sidebar слева, но уже) */
+@media (min-width: 769px) and (max-height: 500px) and (orientation: landscape) {
   .sidebar {
-    width: 60px;
-  }
-  
-  .nav-link {
-    padding: 0.75rem;
-    min-height: 48px;
-  }
-  
-  .nav-icon {
-    width: 20px;
-    height: 20px;
-  }
-}
-
-/* Landscape mode */
-@media (max-height: 500px) and (orientation: landscape) {
-  .sidebar {
-    width: 60px;
+    width: 70px;
   }
   
   .sidebar-nav {
@@ -134,9 +163,34 @@
   }
 }
 
+/* Landscape mode - mobile (sidebar снизу, низкий) */
+@media (max-width: 768px) and (max-height: 500px) and (orientation: landscape) {
+  .sidebar {
+    height: 50px;
+  }
+  
+  .nav-link {
+    padding: 0.5rem;
+    min-height: 50px;
+  }
+  
+  .nav-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
 /* iOS Safe Area */
 @supports (padding: max(0px)) {
   .sidebar {
     padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  
+  /* На мобильных (bottom nav) учитываем safe area снизу */
+  @media (max-width: 768px) {
+    .sidebar {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
   }
 }
