@@ -1,0 +1,21 @@
+{
+  "name": "studycore-telegram-bot",
+  "version": "1.0.0",
+  "description": "Telegram bot для управления домашними заданиями StudyCore",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js",
+    "dev": "nodemon bot.js"
+  },
+  "keywords": ["telegram", "bot", "supabase", "homework"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "node-telegram-bot-api": "^0.66.0",
+    "@supabase/supabase-js": "^2.39.3",
+    "dotenv": "^16.4.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}
