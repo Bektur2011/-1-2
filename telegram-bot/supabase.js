@@ -12,34 +12,21 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 async function addHomework(title, description) {
   const { data, error } = await supabase
-    .from('homework_bot')
-    .insert([
-      { 
-        title: title,
-        description: description
-      }
-    ])
+    .from('homework')
+    .insert([{ title, description }])
     .select();
 
-  if (error) {
-    console.error('Ошибка добавления задания:', error);
-    throw error;
-  }
-
+  if (error) throw error;
   return data[0];
 }
 
 async function getAllHomework() {
   const { data, error } = await supabase
-    .from('homework_bot')
+    .from('homework')
     .select('*')
     .order('created_at', { ascending: false });
 
-  if (error) {
-    console.error('Ошибка получения заданий:', error);
-    throw error;
-  }
-
+  if (error) throw error;
   return data;
 }
 

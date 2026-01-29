@@ -5,9 +5,7 @@ require('dotenv').config();
 const token = process.env.BOT_TOKEN;
 const adminIds = process.env.ADMIN_IDS.split(',').map(id => parseInt(id.trim()));
 
-if (!token) {
-  throw new Error('BOT_TOKEN должен быть указан в .env файле');
-}
+if (!token) throw new Error('BOT_TOKEN должен быть указан в .env файле');
 
 const bot = new TelegramBot(token, { polling: true });
 
@@ -39,28 +37,7 @@ bot.onText(/\/start/, (msg) => {
     '👋 Добро пожаловать в StudyCore Bot!\n\n' +
     'Доступные команды:\n' +
     '/add заголовок | описание - добавить задание\n' +
-    '/list - показать все задания\n' +
-    '/help - помощь'
-  );
-});
-
-bot.onText(/\/help/, (msg) => {
-  const chatId = msg.chat.id;
-  const userId = msg.from.id;
-
-  if (!isAdmin(userId)) {
-    bot.sendMessage(chatId, '❌ У вас нет доступа к этому боту.');
-    return;
-  }
-
-  bot.sendMessage(chatId,
-    '📚 Справка по командам:\n\n' +
-    '1️⃣ /add заголовок | описание\n' +
-    '   Пример: /add Математика | Решить задачи 1-10\n\n' +
-    '2️⃣ /list\n' +
-    '   Показывает все домашние задания\n\n' +
-    '3️⃣ /help\n' +
-    '   Показывает эту справку'
+    '/list - показать все задания'
   );
 });
 
@@ -78,7 +55,7 @@ bot.onText(/\/add (.+)/, async (msg, match) => {
 
   if (parts.length !== 2 || !parts[0] || !parts[1]) {
     bot.sendMessage(chatId, 
-      '❌ Неверный формат команды.\n\n' +
+      '❌ Неверный формат.\n\n' +
       'Используйте: /add заголовок | описание\n' +
       'Пример: /add Математика | Решить задачи 1-10'
     );
@@ -90,18 +67,15 @@ bot.onText(/\/add (.+)/, async (msg, match) => {
   try {
     const homework = await addHomework(title, description);
     bot.sendMessage(chatId,
-      '✅ Задание успешно добавлено!\n\n' +
+      '✅ Задание добавлено!\n\n' +
       `📝 ID: ${homework.id}\n` +
-      `📌 Заголовок: ${homework.title}\n` +
-      `📄 Описание: ${homework.description}\n` +
-      `📅 Создано: ${formatDate(homework.created_at)}`
+      `📌 ${homework.title}\n` +
+      `📄 ${homework.description}\n` +
+      `📅 ${formatDate(homework.created_at)}`
     );
   } catch (error) {
-    console.error('Ошибка при добавлении задания:', error);
-    bot.sendMessage(chatId, 
-      '❌ Ошибка при добавлении задания.\n' +
-      'Проверьте подключение к базе данных и права доступа.'
-    );
+    console.error('Ошибка:', error);
+    bot.sendMessage(chatId, '❌ Ошибка при добавлении задания.');
   }
 });
 
@@ -118,17 +92,17 @@ bot.onText(/\/list/, async (msg) => {
     const homeworks = await getAllHomework();
 
     if (homeworks.length === 0) {
-      bot.sendMessage(chatId, '📭 Пока нет ни одного задания.');
+      bot.sendMessage(chatId, '📭 Пока нет заданий.');
       return;
     }
 
     let message = `📚 Всего заданий: ${homeworks.length}\n\n`;
 
     homeworks.forEach((hw, index) => {
-      message += `${index + 1}. 📝 ID: ${hw.id}\n`;
-      message += `   📌 ${hw.title}\n`;
-      message += `   📄 ${hw.description}\n`;
-      message += `   📅 ${formatDate(hw.created_at)}\n\n`;
+      message += `${index + 1}. ID: ${hw.id}\n`;
+      message += `📌 ${hw.title}\n`;
+      message += `📄 ${hw.description}\n`;
+      message += `📅 ${formatDate(hw.created_at)}\n\n`;
     });
 
     const maxLength = 4000;
@@ -140,11 +114,8 @@ bot.onText(/\/list/, async (msg) => {
       bot.sendMessage(chatId, message);
     }
   } catch (error) {
-    console.error('Ошибка при получении заданий:', error);
-    bot.sendMessage(chatId, 
-      '❌ Ошибка при получении заданий.\n' +
-      'Проверьте подключение к базе данных.'
-    );
+    console.error('Ошибка:', error);
+    bot.sendMessage(chatId, '❌ Ошибка при получении заданий.');
   }
 });
 
@@ -153,19 +124,14 @@ bot.on('message', (msg) => {
   const userId = msg.from.id;
   const text = msg.text;
 
-  if (!text || text.startsWith('/')) {
-    return;
-  }
+  if (!text || text.startsWith('/')) return;
 
   if (!isAdmin(userId)) {
     bot.sendMessage(chatId, '❌ У вас нет доступа к этому боту.');
     return;
   }
 
-  bot.sendMessage(chatId, 
-    '❓ Неизвестная команда.\n\n' +
-    'Используйте /help для просмотра доступных команд.'
-  );
+  bot.sendMessage(chatId, '❓ Неизвестная команда. Используйте /start');
 });
 
 console.log('🤖 Бот запущен и готов к работе!');
