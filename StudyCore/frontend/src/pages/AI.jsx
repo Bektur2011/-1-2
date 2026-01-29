@@ -1,5 +1,4 @@
 import React from "react";
-import "../styles/clean-global.css";
 import "../styles/clean-ai.css";
 
 const AI = () => {

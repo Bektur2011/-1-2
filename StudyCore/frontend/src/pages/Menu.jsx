@@ -1,6 +1,5 @@
 import React from "react";
 import { useAuth } from "../store/authStore";
-import "../styles/clean-global.css";
 import "../styles/clean-menu.css";
 
 const Menu = () => {

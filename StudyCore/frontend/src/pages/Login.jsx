@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../store/authStore";
 import { loginRequest } from "../api/auth.api";
 import { Lock } from "lucide-react";
-import "../styles/clean-global.css";
 import "../styles/clean-login.css";
 
 const Login = () => {

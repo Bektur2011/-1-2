@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../store/authStore";
 import { getHomework, addHomework, deleteHomework } from "../api/homework.api";
-import "../styles/clean-global.css";
 import "../styles/clean-homework.css";
 
 export default function Homework() {

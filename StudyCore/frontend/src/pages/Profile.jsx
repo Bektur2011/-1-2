@@ -1,7 +1,6 @@
 import React from "react";
 import { useAuth } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
-import "../styles/clean-global.css";
 import "../styles/clean-profile.css";
 
 const Profile = () => {

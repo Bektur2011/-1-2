@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../store/authStore";
 import { getUsers } from "../api/users.api";
-import "../styles/clean-global.css";
 import "../styles/clean-journal.css";
 
 const Journal = () => {
