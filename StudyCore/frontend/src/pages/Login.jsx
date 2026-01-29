@@ -1,11 +1,10 @@
-// frontend/src/pages/Login.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../store/authStore";
 import { loginRequest } from "../api/auth.api";
-import "../styles/modern-global.css";
-import "../styles/modern-animations.css";
-import "../styles/modern-login.css";
+import { Lock } from "lucide-react";
+import "../styles/clean-global.css";
+import "../styles/clean-login.css";
 
 const Login = () => {
   const [password, setPassword] = useState("");
@@ -15,7 +14,6 @@ const Login = () => {
   const navigate = useNavigate();
   const login = useAuth((state) => state.login);
 
-  // Hide welcome message after 3 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowWelcome(false);
@@ -23,7 +21,6 @@ const Login = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Auto-hide toast after 4 seconds
   useEffect(() => {
     if (toast) {
       const timer = setTimeout(() => {
@@ -89,18 +86,16 @@ const Login = () => {
 
   return (
     <div className="login-page">
-      <div className="particles-bg"></div>
-      
       {showWelcome && (
-        <div className="welcome-banner animate-fade-in-down">
+        <div className="welcome-banner">
           <h1>StudyCore</h1>
           <p>Современная система управления обучением</p>
         </div>
       )}
 
-      <div className="login-card animate-zoom-in">
-        <span className="login-icon">🔐</span>
-        <h2>Вход в систему</h2>
+      <div className="login-card">
+        <Lock className="login-icon" size={48} />
+        <h2>Вход</h2>
         <div className="input-wrapper">
           <input
             type="password"
@@ -129,7 +124,7 @@ const Login = () => {
             </>
           )}
         </button>
-        <div className="login-footer animate-fade-in delay-100">
+        <div className="login-footer">
           <p>Введите ваш пароль для доступа к платформе</p>
         </div>
       </div>

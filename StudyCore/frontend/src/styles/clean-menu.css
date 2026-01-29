@@ -1,0 +1,245 @@
+/* Минималистичный дизайн главного меню */
+
+.menu-page {
+  min-height: 100vh;
+  background: var(--white);
+  padding: 2rem 1rem 2rem 100px; /* отступ слева для sidebar */
+}
+
+.menu-container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.menu-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.menu-header h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 0.75rem;
+}
+
+.menu-header p {
+  font-size: 1.125rem;
+  color: var(--gray-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.menu-header strong {
+  color: var(--gray-900);
+}
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.875rem;
+  background: var(--gray-100);
+  color: var(--gray-700);
+  border-radius: var(--radius-lg);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+/* Информационные секции */
+.info-sections {
+  display: grid;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.info-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+}
+
+.info-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.info-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-icon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.info-card-header h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.info-card-content p {
+  color: var(--gray-600);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+.info-card-content p:last-child {
+  margin-bottom: 0;
+}
+
+.info-card-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.info-card-content ul li {
+  padding: 0.5rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+  color: var(--gray-600);
+}
+
+.info-card-content ul li::before {
+  content: '•';
+  position: absolute;
+  left: 0;
+  color: var(--primary);
+  font-weight: bold;
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+
+.info-card-content strong {
+  color: var(--gray-900);
+  font-weight: 600;
+}
+
+.feature-highlight {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Адаптивность */
+@media (max-width: 1024px) {
+  .menu-page {
+    padding-left: 90px;
+  }
+}
+
+@media (max-width: 768px) {
+  .menu-page {
+    padding: 2rem 1rem 2rem 80px;
+  }
+  
+  .menu-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+  }
+  
+  .menu-header h2 {
+    font-size: 2rem;
+  }
+  
+  .menu-header p {
+    font-size: 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .info-sections {
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .info-card {
+    padding: 1.5rem;
+  }
+  
+  .info-card-header h3 {
+    font-size: 1.25rem;
+  }
+  
+  .info-icon {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .menu-page {
+    padding: 1.5rem 0.75rem 1.5rem 70px;
+  }
+  
+  .menu-header h2 {
+    font-size: 1.75rem;
+  }
+  
+  .menu-header p {
+    font-size: 0.9375rem;
+  }
+  
+  .info-card {
+    padding: 1.25rem;
+  }
+  
+  .info-card-header {
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .info-card-header h3 {
+    font-size: 1.125rem;
+  }
+  
+  .info-icon {
+    font-size: 1.5rem;
+  }
+  
+  .info-card-content p,
+  .info-card-content ul li {
+    font-size: 0.9375rem;
+  }
+}
+
+/* Landscape mode */
+@media (max-height: 500px) and (orientation: landscape) {
+  .menu-page {
+    padding: 1rem 0.75rem 1rem 70px;
+  }
+  
+  .menu-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+  }
+  
+  .menu-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .info-sections {
+    gap: 1rem;
+  }
+  
+  .info-card {
+    padding: 1rem;
+  }
+}
+
+/* iOS Safe Area */
+@supports (padding: max(0px)) {
+  .menu-page {
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  }
+}

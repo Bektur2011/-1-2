@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../store/authStore";
 import { getHomework, addHomework, deleteHomework } from "../api/homework.api";
-import "../styles/modern-global.css";
-import "../styles/modern-animations.css";
-import "../styles/modern-homework.css";
+import "../styles/clean-global.css";
+import "../styles/clean-homework.css";
 
 export default function Homework() {
   const user = useAuth((state) => state.user);
@@ -41,7 +40,7 @@ export default function Homework() {
     }
     
     try {
-      const response = await addHomework(title, desc, "");
+      const response = await addHomework(title, desc);
       setList([...list, response.data]);
       setTitle("");
       setDesc("");
@@ -104,12 +103,12 @@ export default function Homework() {
   return (
     <div className="homework-page">
       <div className="homework-container">
-        <div className="homework-header animate-fade-in-down">
+        <div className="homework-header">
           <h2>📚 Домашние задания</h2>
         </div>
 
         {canAddHomework && (
-          <div className="homework-form animate-scale-in delay-100">
+          <div className="homework-form">
             <div className="form-row">
               <div className="form-group">
                 <label>Название задания</label>
@@ -140,23 +139,18 @@ export default function Homework() {
         )}
 
         {list.length === 0 ? (
-          <div className="empty-message animate-fade-in-up">Заданий пока нет</div>
+          <div className="empty-message">Заданий пока нет</div>
         ) : (
           <div className="homework-list">
-            {list.map((h, index) => (
-              <div key={h.id} className={`homework-item animate-scale-in delay-${Math.min(index, 5)}00`}>
-                {h.image_url && (
-                  <div className="homework-image">
-                    <img src={h.image_url} alt={h.title} />
-                  </div>
-                )}
+            {list.map((h) => (
+              <div key={h.id} className="homework-item">
                 <div className="homework-item-content">
                   <h3>{h.title}</h3>
                   <p>{h.description}</p>
                 </div>
                 {canAddHomework && (
                   <button className="btn-delete" onClick={() => remove(h.id)} title="Удалить задание">
-                    🗑️
+                    🗑️ Удалить
                   </button>
                 )}
               </div>

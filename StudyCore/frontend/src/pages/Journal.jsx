@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../store/authStore";
 import { getUsers } from "../api/users.api";
-import "../styles/modern-global.css";
-import "../styles/modern-animations.css";
-import "../styles/modern-journal.css";
+import "../styles/clean-global.css";
+import "../styles/clean-journal.css";
 
 const Journal = () => {
   const user = useAuth((state) => state.user);
@@ -53,43 +52,35 @@ const Journal = () => {
   return (
     <div className="journal-page">
       <div className="journal-container">
-        <div className="journal-header animate-fade-in-down">
+        <div className="journal-header">
           <h2>📖 Журнал учеников</h2>
         </div>
 
         {users.length === 0 ? (
-          <div className="empty-table animate-fade-in-up">
+          <div className="empty-table">
             Пользователей пока нет
           </div>
         ) : (
-          <div className="table-container animate-scale-in delay-100">
+          <div className="table-container">
             <table className="journal-table">
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Логин</th>
                   <th>Имя</th>
                   <th>Роль</th>
-                  <th>Пол</th>
-                  <th>Статус</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map((u) => (
                   <tr key={u.id}>
-                    <td>{u.id}</td>
-                    <td>{u.login}</td>
-                    <td>
+                    <td data-label="ID">{u.id}</td>
+                    <td data-label="Имя">
                       {getGenderIcon(u.gender)} {u.name}
                     </td>
-                    <td>
+                    <td data-label="Роль">
                       <span className={`role-badge ${getRoleBadgeClass(u.role)}`}>
                         {u.role}
                       </span>
-                    </td>
-                    <td>{u.gender === "Female" ? "Женский" : "Мужской"}</td>
-                    <td>
-                      <span className="status-badge active">Активен</span>
                     </td>
                   </tr>
                 ))}

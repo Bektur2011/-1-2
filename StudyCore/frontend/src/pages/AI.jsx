@@ -1,14 +1,13 @@
 import React from "react";
-import "../styles/modern-global.css";
-import "../styles/modern-animations.css";
-import "../styles/modern-ai.css";
+import "../styles/clean-global.css";
+import "../styles/clean-ai.css";
 
 const AI = () => {
   return (
     <div className="ai-page">
       <div className="ai-container">
-        <div className="ai-icon animate-float">🤖</div>
-        <div className="ai-message animate-scale-in">
+        <div className="ai-icon">🤖</div>
+        <div className="ai-message">
           <h2>Искусственный интеллект</h2>
           <p>
             <strong>Эта функция находится в разработке</strong>

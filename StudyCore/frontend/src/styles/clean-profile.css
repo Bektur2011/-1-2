@@ -1,0 +1,221 @@
+/* Минималистичный дизайн страницы профиля */
+
+.profile-page {
+  min-height: 100vh;
+  background: var(--white);
+  padding: 2rem 1rem 2rem 100px;
+}
+
+.profile-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.profile-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.profile-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-xl);
+  padding: 3rem 2rem;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+
+.profile-avatar {
+  font-size: 5rem;
+  margin-bottom: 1.5rem;
+  display: inline-block;
+}
+
+.profile-info h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 2rem;
+}
+
+.profile-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.profile-field {
+  text-align: center;
+  padding: 1.5rem 1rem;
+  background: var(--gray-50);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-200);
+}
+
+.profile-field-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.profile-field-value {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.btn-logout {
+  padding: 0.875rem 2rem;
+  background: var(--white);
+  color: var(--error);
+  border: 1px solid var(--error);
+  border-radius: var(--radius);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 1rem;
+  min-height: 48px;
+}
+
+.btn-logout:hover {
+  background: var(--error);
+  color: var(--white);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-logout:active {
+  transform: translateY(0);
+}
+
+/* Адаптивность */
+@media (max-width: 1024px) {
+  .profile-page {
+    padding-left: 90px;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-page {
+    padding: 2rem 1rem 2rem 80px;
+  }
+  
+  .profile-header h2 {
+    font-size: 1.75rem;
+  }
+  
+  .profile-card {
+    padding: 2rem 1.5rem;
+  }
+  
+  .profile-avatar {
+    font-size: 4rem;
+  }
+  
+  .profile-info h3 {
+    font-size: 1.75rem;
+  }
+  
+  .profile-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .profile-field {
+    padding: 1.25rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-page {
+    padding: 1.5rem 0.75rem 1.5rem 70px;
+  }
+  
+  .profile-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .profile-card {
+    padding: 1.5rem 1rem;
+  }
+  
+  .profile-avatar {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .profile-info h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .profile-field {
+    padding: 1rem;
+  }
+  
+  .profile-field-label {
+    font-size: 0.8125rem;
+  }
+  
+  .profile-field-value {
+    font-size: 1rem;
+  }
+  
+  .btn-logout {
+    width: 100%;
+  }
+}
+
+/* Landscape mode */
+@media (max-height: 500px) and (orientation: landscape) {
+  .profile-page {
+    padding: 1rem 0.75rem 1rem 70px;
+  }
+  
+  .profile-header {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+  }
+  
+  .profile-card {
+    padding: 1.5rem 1rem;
+  }
+  
+  .profile-avatar {
+    font-size: 3rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .profile-info h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .profile-row {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  
+  .profile-field {
+    padding: 0.75rem 0.5rem;
+  }
+}
+
+/* iOS Safe Area */
+@supports (padding: max(0px)) {
+  .profile-page {
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  }
+}

@@ -1,0 +1,229 @@
+/* Минималистичный дизайн страницы журнала */
+
+.journal-page {
+  min-height: 100vh;
+  background: var(--white);
+  padding: 2rem 1rem 2rem 100px;
+}
+
+.journal-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.journal-header {
+  text-align: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.journal-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.table-container {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.journal-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.journal-table thead {
+  background: var(--gray-50);
+}
+
+.journal-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--gray-700);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.journal-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--gray-200);
+  color: var(--gray-600);
+}
+
+.journal-table tbody tr {
+  transition: var(--transition);
+}
+
+.journal-table tbody tr:hover {
+  background: var(--gray-50);
+}
+
+.journal-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--radius);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.role-admin {
+  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+}
+
+.role-moderator {
+  background: rgba(59, 130, 246, 0.1);
+  color: #2563eb;
+}
+
+.role-student {
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+}
+
+.empty-table {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--gray-500);
+  font-size: 1.125rem;
+  background: var(--gray-50);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-200);
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 1024px) {
+  .journal-page {
+    padding-left: 90px;
+  }
+}
+
+@media (max-width: 768px) {
+  .journal-page {
+    padding: 2rem 1rem 2rem 80px;
+  }
+  
+  .journal-header h2 {
+    font-size: 1.75rem;
+  }
+  
+  .table-container {
+    overflow-x: auto;
+  }
+  
+  .journal-table {
+    min-width: 600px;
+  }
+  
+  .journal-table th,
+  .journal-table td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.875rem;
+  }
+  
+  .journal-table th {
+    font-size: 0.8125rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .journal-page {
+    padding: 1.5rem 0.5rem 1.5rem 70px;
+  }
+  
+  .journal-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  .journal-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  /* Карточки вместо таблицы на очень маленьких экранах */
+  .table-container {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+  
+  .journal-table,
+  .journal-table thead,
+  .journal-table tbody,
+  .journal-table tr,
+  .journal-table th,
+  .journal-table td {
+    display: block;
+    min-width: auto;
+  }
+  
+  .journal-table thead {
+    display: none;
+  }
+  
+  .journal-table tr {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+  }
+  
+  .journal-table td {
+    padding: 0.5rem 0;
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .journal-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--gray-700);
+    font-size: 0.8125rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .role-badge {
+    margin-left: auto;
+  }
+}
+
+/* Landscape mode */
+@media (max-height: 500px) and (orientation: landscape) {
+  .journal-page {
+    padding: 1rem 0.75rem 1rem 70px;
+  }
+  
+  .journal-header {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+  }
+  
+  .journal-table th,
+  .journal-table td {
+    padding: 0.5rem;
+  }
+}
+
+/* iOS Safe Area */
+@supports (padding: max(0px)) {
+  .journal-page {
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  }
+}

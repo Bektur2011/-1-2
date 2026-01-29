@@ -1,28 +1,60 @@
-// Вставляешь сюда: frontend/src/components/Sidebar.jsx
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import "../styles/sidebar.css";
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Home, User, BookOpen, FileText, Bot } from "lucide-react";
+import "../styles/clean-sidebar.css";
 
 const Sidebar = () => {
-  const [open, setOpen] = useState(true);
+  const location = useLocation();
 
-  const toggleSidebar = () => setOpen(!open);
+  const isActive = (path) => location.pathname === path;
 
   return (
-    <div className={`sidebar ${open ? "open" : "closed"}`}>
-      <div className="sidebar-header">
-        <h2>StudyCore</h2>
-        <button className="toggle-btn" onClick={toggleSidebar}>
-          {open ? "⮜" : "⮞"}
-        </button>
-      </div>
-
+    <div className="sidebar">
       <nav className="sidebar-nav">
-        <Link to="/menu" className="nav-link">Главное меню</Link>
-        <Link to="/profile" className="nav-link">Профиль</Link>
-        <Link to="/homework" className="nav-link">ДЗ</Link>
-        <Link to="/journal" className="nav-link">Журнал</Link>
-        <Link to="/ai" className="nav-link">ИИ</Link>
+        <Link 
+          to="/menu" 
+          className={`nav-link ${isActive("/menu") ? "active" : ""}`}
+          title="Главное меню"
+        >
+          <Home className="nav-icon" />
+          <span className="nav-link-tooltip">Главное меню</span>
+        </Link>
+        
+        <Link 
+          to="/profile" 
+          className={`nav-link ${isActive("/profile") ? "active" : ""}`}
+          title="Профиль"
+        >
+          <User className="nav-icon" />
+          <span className="nav-link-tooltip">Профиль</span>
+        </Link>
+        
+        <Link 
+          to="/homework" 
+          className={`nav-link ${isActive("/homework") ? "active" : ""}`}
+          title="Домашние задания"
+        >
+          <BookOpen className="nav-icon" />
+          <span className="nav-link-tooltip">Домашние задания</span>
+        </Link>
+        
+        <Link 
+          to="/journal" 
+          className={`nav-link ${isActive("/journal") ? "active" : ""}`}
+          title="Журнал"
+        >
+          <FileText className="nav-icon" />
+          <span className="nav-link-tooltip">Журнал</span>
+        </Link>
+        
+        <Link 
+          to="/ai" 
+          className={`nav-link ${isActive("/ai") ? "active" : ""}`}
+          title="ИИ помощник"
+        >
+          <Bot className="nav-icon" />
+          <span className="nav-link-tooltip">ИИ помощник</span>
+        </Link>
       </nav>
     </div>
   );

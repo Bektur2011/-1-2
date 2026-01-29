@@ -1,0 +1,235 @@
+/* Минималистичный дизайн страницы AI */
+
+.ai-page {
+  min-height: 100vh;
+  background: var(--white);
+  padding: 2rem 1rem 2rem 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ai-container {
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+}
+
+.ai-icon {
+  font-size: 5rem;
+  margin-bottom: 2rem;
+  display: inline-block;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.ai-message {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-xl);
+  padding: 3rem 2rem;
+  box-shadow: var(--shadow-xl);
+}
+
+.ai-message h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 1.5rem;
+}
+
+.ai-message p {
+  color: var(--gray-600);
+  line-height: 1.7;
+  font-size: 1.0625rem;
+}
+
+.ai-features {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--gray-200);
+  text-align: left;
+}
+
+.ai-features h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 1rem;
+}
+
+.ai-features ul {
+  list-style: none;
+  padding: 0;
+}
+
+.ai-features li {
+  padding: 0.75rem 0;
+  padding-left: 2rem;
+  position: relative;
+  color: var(--gray-600);
+  line-height: 1.6;
+}
+
+.ai-features li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--primary);
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+.ai-loading {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.ai-loading span {
+  width: 8px;
+  height: 8px;
+  background: var(--primary);
+  border-radius: 50%;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.ai-loading span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.ai-loading span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* Адаптивность */
+@media (max-width: 1024px) {
+  .ai-page {
+    padding-left: 90px;
+  }
+}
+
+@media (max-width: 768px) {
+  .ai-page {
+    padding: 2rem 1rem 2rem 80px;
+  }
+  
+  .ai-icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .ai-message {
+    padding: 2rem 1.5rem;
+  }
+  
+  .ai-message h2 {
+    font-size: 1.75rem;
+  }
+  
+  .ai-message p {
+    font-size: 1rem;
+  }
+  
+  .ai-features h3 {
+    font-size: 1.125rem;
+  }
+  
+  .ai-features li {
+    padding-left: 1.75rem;
+    font-size: 0.9375rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ai-page {
+    padding: 1.5rem 0.75rem 1.5rem 70px;
+  }
+  
+  .ai-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .ai-message {
+    padding: 1.5rem 1.25rem;
+  }
+  
+  .ai-message h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  
+  .ai-message p {
+    font-size: 0.9375rem;
+  }
+  
+  .ai-features {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+  }
+  
+  .ai-features h3 {
+    font-size: 1.0625rem;
+  }
+  
+  .ai-features li {
+    padding: 0.625rem 0;
+    padding-left: 1.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Landscape mode */
+@media (max-height: 500px) and (orientation: landscape) {
+  .ai-page {
+    padding: 1rem 0.75rem 1rem 70px;
+    display: block;
+  }
+  
+  .ai-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  
+  .ai-message {
+    padding: 1.5rem 1.25rem;
+  }
+  
+  .ai-message h2 {
+    font-size: 1.375rem;
+    margin-bottom: 1rem;
+  }
+  
+  .ai-features {
+    margin-top: 1rem;
+    padding-top: 1rem;
+  }
+}
+
+/* iOS Safe Area */
+@supports (padding: max(0px)) {
+  .ai-page {
+    padding-bottom: max(2rem, env(safe-area-inset-bottom));
+  }
+}
