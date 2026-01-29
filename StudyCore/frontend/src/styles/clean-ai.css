@@ -3,7 +3,7 @@
 .ai-page {
   min-height: 100vh;
   background: var(--white);
-  padding: 2rem 1rem 2rem 100px;
+  padding: 2rem 1rem 2rem 90px; /* отступ слева для sidebar (80px + 10px) */
   display: flex;
   align-items: center;
   justify-content: center;
