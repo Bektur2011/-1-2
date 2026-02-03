@@ -5,6 +5,7 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 import uuid
+from google import genai
 
 # Load environment variables
 load_dotenv()
@@ -40,6 +41,40 @@ if not SUPABASE_URL.startswith("https://") or not SUPABASE_URL.endswith(".supaba
     raise Exception("Invalid SUPABASE_URL format. Must be https://xxxx.supabase.co without trailing slash.")
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+# Gemini AI setup
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+if GEMINI_API_KEY and GEMINI_API_KEY != "your_gemini_api_key_here":
+    try:
+        # Инициализируем клиент
+        client = genai.Client(api_key=GEMINI_API_KEY)
+        
+        # Системный промпт для AI помощника
+        SYSTEM_INSTRUCTION = """Ты - AI помощник для образовательной платформы StudyCore. 
+Твоя задача - помогать студентам с учебой: отвечать на вопросы по темам, 
+объяснять материал простым языком, помогать с домашними заданиями.
+
+Правила:
+- Отвечай на русском языке
+- Будь дружелюбным и поддерживающим
+- Объясняй сложные вещи простыми словами
+- Если не знаешь ответ - честно признайся
+- Мотивируй студентов к обучению
+- Используй эмодзи для лучшего восприятия ✨📚🎯
+
+Помни: ты здесь чтобы помочь учиться, а не давать готовые ответы!"""
+        
+        ai_model = {
+            'client': client,
+            'system_instruction': SYSTEM_INSTRUCTION
+        }
+        print("✅ Gemini AI initialized successfully (google.genai)")
+    except Exception as e:
+        print(f"❌ Error initializing Gemini AI: {str(e)}")
+        ai_model = None
+else:
+    ai_model = None
+    print("⚠️  WARNING: GEMINI_API_KEY not configured. AI chat will be disabled.")
 
 # --- Вспомогательные функции для файлов ---
 def allowed_file(filename):
@@ -457,6 +492,139 @@ def delete_homework(hw_id):
         print(f"ERROR deleting homework: {str(e)}")
         print("=" * 60)
         return jsonify({"error": str(e)}), 500
+
+# --- API для AI чата ---
+@app.route("/api/ai/chat", methods=["POST"])
+def ai_chat():
+    """
+    Endpoint для общения с AI помощником
+    POST /api/ai/chat
+    Body: { "message": "Привет, помоги с математикой", "history": [] }
+    """
+    try:
+        print("=" * 60)
+        print("AI CHAT REQUEST")
+        print("=" * 60)
+        
+        # Проверяем что AI модель настроена
+        if not ai_model:
+            print("ERROR: Gemini AI not configured")
+            print("=" * 60)
+            return jsonify({
+                "error": "AI чат не настроен",
+                "hint": "Администратор должен добавить GEMINI_API_KEY в .env файл. Получить ключ можно на https://makersuite.google.com/app/apikey"
+            }), 503
+        
+        # Получаем данные из запроса
+        data = request.json
+        if not data:
+            print("ERROR: No JSON data received")
+            print("=" * 60)
+            return jsonify({"error": "Некорректный запрос"}), 400
+        
+        user_message = data.get("message", "").strip()
+        chat_history = data.get("history", [])
+        
+        print(f"USER MESSAGE: {user_message}")
+        print(f"HISTORY LENGTH: {len(chat_history)} messages")
+        
+        if not user_message:
+            print("ERROR: Message is empty")
+            print("=" * 60)
+            return jsonify({"error": "Сообщение не может быть пустым"}), 400
+        
+        # Формируем сообщения для Gemini
+        contents = []
+        
+        # Добавляем системную инструкцию как первое сообщение
+        contents.append({
+            "role": "user",
+            "parts": [{"text": ai_model['system_instruction']}]
+        })
+        contents.append({
+            "role": "model",
+            "parts": [{"text": "Понял! Я буду помогать студентам с учебой по этим правилам."}]
+        })
+        
+        # Добавляем историю чата
+        for msg in chat_history:
+            role = "user" if msg["role"] == "user" else "model"
+            contents.append({
+                "role": role,
+                "parts": [{"text": msg["content"]}]
+            })
+        
+        # Добавляем текущее сообщение пользователя
+        contents.append({
+            "role": "user",
+            "parts": [{"text": user_message}]
+        })
+        
+        # Отправляем запрос в Gemini
+        print("Sending message to Gemini...")
+        response = ai_model['client'].models.generate_content(
+            model='gemini-2.0-flash-exp',
+            contents=contents,
+            config={
+                "temperature": 0.7,
+                "top_p": 0.95,
+                "top_k": 40,
+                "max_output_tokens": 2048,
+            }
+        )
+        
+        ai_response = response.text
+        
+        print(f"AI RESPONSE LENGTH: {len(ai_response)} characters")
+        print(f"AI RESPONSE PREVIEW: {ai_response[:100]}...")
+        print("=" * 60)
+        
+        return jsonify({
+            "response": ai_response,
+            "success": True
+        }), 200
+        
+    except Exception as e:
+        error_str = str(e)
+        print(f"ERROR in AI chat: {error_str}")
+        print(f"ERROR TYPE: {type(e).__name__}")
+        print("=" * 60)
+        
+        # Проверяем специфичные ошибки
+        if "API_KEY" in error_str.upper() or "INVALID" in error_str.upper():
+            return jsonify({
+                "error": "Неверный API ключ",
+                "hint": "Проверьте GEMINI_API_KEY в .env файле"
+            }), 500
+        elif "QUOTA" in error_str.upper() or "LIMIT" in error_str.upper():
+            return jsonify({
+                "error": "Превышен лимит запросов",
+                "hint": "Подождите немного и попробуйте снова"
+            }), 429
+        else:
+            return jsonify({
+                "error": "Ошибка AI сервиса",
+                "details": error_str
+            }), 500
+
+@app.route("/api/ai/status", methods=["GET"])
+def ai_status():
+    """
+    Проверяет доступность AI сервиса
+    GET /api/ai/status
+    """
+    if ai_model:
+        return jsonify({
+            "available": True,
+            "model": "Gemini 2.0 Flash",
+            "message": "AI чат готов к работе ✨"
+        }), 200
+    else:
+        return jsonify({
+            "available": False,
+            "message": "AI чат не настроен. Добавьте GEMINI_API_KEY в .env",
+            "hint": "Получить ключ: https://makersuite.google.com/app/apikey"
+        }), 503
 
 # --- Раздача фронтенда ---
 @app.route("/", defaults={"path": ""})
