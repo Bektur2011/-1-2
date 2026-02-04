@@ -5,4 +5,4 @@ nixPkgs = ["python39", "nodejs", "npm"]
 cmds = ["./build.sh"]
 
 [start]
-cmd = "python app.py"
+cmd = "python start_services.py"

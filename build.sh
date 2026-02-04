@@ -62,5 +62,11 @@ ls -la dist/
 echo "=== Installing backend dependencies ==="
 pip install -r StudyCore/backend/requirements.txt
 
+echo "=== Installing Telegram Bot dependencies ==="
+cd telegram-bot
+npm ci
+echo "Bot dependencies installed"
+cd ..
+
 echo "=== Build script finished successfully ==="
 
