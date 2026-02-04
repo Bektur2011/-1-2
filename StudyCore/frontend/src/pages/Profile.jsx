@@ -53,6 +53,21 @@ const Profile = () => {
             )}
           </div>
         </div>
+
+        <div className="profile-telegram">
+          <div className="profile-telegram-text">
+            Р•СЃР»Рё РЅРµС‚ РІСЂРµРјРµРЅРё Р·Р°С…РѕРґРёС‚СЊ РЅР° СЃР°Р№С‚, РјРѕР¶РЅРѕ
+            РІСЃРµ СЃРґРµР»Р°С‚СЊ С‡РµСЂРµР· Telegram-Р±РѕС‚Р°:
+          </div>
+          <a
+            className="profile-telegram-link"
+            href="https://t.me/homework_admin_bot"
+            target="_blank"
+            rel="noreferrer"
+          >
+            https://t.me/homework_admin_bot
+          </a>
+        </div>
       </div>
     </div>
   );

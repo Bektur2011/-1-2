@@ -100,6 +100,33 @@
   transform: translateY(0);
 }
 
+.profile-telegram {
+  margin-top: 2rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px dashed var(--gray-300);
+  border-radius: var(--radius-lg);
+  background: var(--gray-50);
+  text-align: center;
+}
+
+.profile-telegram-text {
+  font-size: 0.95rem;
+  color: var(--gray-700);
+  margin-bottom: 0.75rem;
+}
+
+.profile-telegram-link {
+  display: inline-block;
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.profile-telegram-link:hover {
+  text-decoration: underline;
+}
+
 /* Адаптивность */
 @media (max-width: 1024px) {
   .profile-page {
