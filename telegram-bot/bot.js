@@ -17,6 +17,23 @@ function isAdmin(userId) {
   return adminIds.includes(userId);
 }
 
+function denyAddAccess(chatId, messageId) {
+  const text =
+    '❌ Добавление заданий доступно только администраторам.\n' +
+    '📚 Вам доступен только список заданий.';
+
+  if (typeof messageId === 'number') {
+    bot.editMessageText(text, {
+      chat_id: chatId,
+      message_id: messageId,
+      reply_markup: getPublicMenuKeyboard()
+    });
+    return;
+  }
+
+  bot.sendMessage(chatId, text, { reply_markup: getPublicMenuKeyboard() });
+}
+
 function formatDate(dateString) {
   const date = new Date(dateString);
   return date.toLocaleString('ru-RU', {
@@ -120,14 +137,8 @@ bot.on('callback_query', async (query) => {
 
     case 'add_homework':
       if (!admin) {
-        bot.editMessageText(
-          '❌ Добавление заданий доступно только администраторам.',
-          {
-            chat_id: chatId,
-            message_id: messageId,
-            reply_markup: getPublicMenuKeyboard()
-          }
-        );
+        delete userStates[userId];
+        denyAddAccess(chatId, messageId);
         return;
       }
 
@@ -208,12 +219,8 @@ bot.on('message', async (msg) => {
   if (!text || text.startsWith('/')) return;
 
   if (!isAdmin(userId)) {
-    bot.sendMessage(
-      chatId,
-      '❌ Добавление заданий доступно только администраторам.\n' +
-      '📚 Вам доступен только список заданий.',
-      { reply_markup: getPublicMenuKeyboard() }
-    );
+    delete userStates[userId];
+    denyAddAccess(chatId);
     return;
   }
 
