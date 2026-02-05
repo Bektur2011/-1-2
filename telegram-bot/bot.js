@@ -1,9 +1,9 @@
-const TelegramBot = require('node-telegram-bot-api');
+﻿const TelegramBot = require('node-telegram-bot-api');
 const { addHomework, getAllHomework } = require('./supabase');
 require('dotenv').config();
 
 const token = process.env.BOT_TOKEN;
-const adminIds = process.env.ADMIN_IDS.split(',').map(id => parseInt(id.trim()));
+const adminIds = process.env.ADMIN_IDS.split(',').map(id => parseInt(id.trim(), 10));
 
 if (!token) throw new Error('BOT_TOKEN должен быть указан в .env файле');
 
@@ -28,13 +28,24 @@ function formatDate(dateString) {
   });
 }
 
-// Главное меню с кнопками
+// Главное меню с кнопками (админ)
 function getMainMenuKeyboard() {
   return {
     inline_keyboard: [
       [
-        { text: '📝 Добавить ДЗ', callback_data: 'add_homework' }
+        { text: '📌 Добавить ДЗ', callback_data: 'add_homework' }
       ],
+      [
+        { text: '📚 Список ДЗ', callback_data: 'list_homework' }
+      ]
+    ]
+  };
+}
+
+// Меню для тех, у кого нет доступа к добавлению
+function getPublicMenuKeyboard() {
+  return {
+    inline_keyboard: [
       [
         { text: '📚 Список ДЗ', callback_data: 'list_homework' }
       ]
@@ -57,16 +68,23 @@ function getBackMenuKeyboard() {
 bot.onText(/\/start/, (msg) => {
   const chatId = msg.chat.id;
   const userId = msg.from.id;
-
-  if (!isAdmin(userId)) {
-    bot.sendMessage(chatId, '❌ У вас нет доступа к этому боту.');
-    return;
-  }
+  const admin = isAdmin(userId);
 
   // Очищаем состояние пользователя
   delete userStates[userId];
 
-  bot.sendMessage(chatId, 
+  if (!admin) {
+    bot.sendMessage(
+      chatId,
+      '👋 Добро пожаловать в StudyCore Bot!\n\n' +
+      'У вас только просмотр списка заданий.',
+      { reply_markup: getPublicMenuKeyboard() }
+    );
+    return;
+  }
+
+  bot.sendMessage(
+    chatId,
     '👋 Добро пожаловать в StudyCore Bot!\n\n' +
     'Выберите действие:',
     { reply_markup: getMainMenuKeyboard() }
@@ -79,12 +97,7 @@ bot.on('callback_query', async (query) => {
   const userId = query.from.id;
   const messageId = query.message.message_id;
   const data = query.data;
-
-  // Проверка прав доступа
-  if (!isAdmin(userId)) {
-    bot.answerCallbackQuery(query.id, { text: '❌ У вас нет доступа' });
-    return;
-  }
+  const admin = isAdmin(userId);
 
   // Подтверждаем получение callback
   bot.answerCallbackQuery(query.id);
@@ -94,18 +107,30 @@ bot.on('callback_query', async (query) => {
     case 'back_to_menu':
       // Очищаем состояние
       delete userStates[userId];
-      
+
       bot.editMessageText(
         '👋 Главное меню\n\nВыберите действие:',
         {
           chat_id: chatId,
           message_id: messageId,
-          reply_markup: getMainMenuKeyboard()
+          reply_markup: admin ? getMainMenuKeyboard() : getPublicMenuKeyboard()
         }
       );
       break;
 
     case 'add_homework':
+      if (!admin) {
+        bot.editMessageText(
+          '❌ Добавление заданий доступно только администраторам.',
+          {
+            chat_id: chatId,
+            message_id: messageId,
+            reply_markup: getPublicMenuKeyboard()
+          }
+        );
+        return;
+      }
+
       // Начинаем процесс добавления ДЗ
       userStates[userId] = {
         state: 'waiting_title',
@@ -113,7 +138,7 @@ bot.on('callback_query', async (query) => {
       };
 
       bot.editMessageText(
-        '📝 Добавление нового задания\n\n' +
+        '📌 Добавление нового задания\n\n' +
         '👉 Шаг 1/2: Введите заголовок задания\n\n' +
         '💡 Например: "Математика" или "История - Параграф 5"',
         {
@@ -135,7 +160,7 @@ bot.on('callback_query', async (query) => {
             {
               chat_id: chatId,
               message_id: messageId,
-              reply_markup: getBackMenuKeyboard()
+              reply_markup: admin ? getBackMenuKeyboard() : getPublicMenuKeyboard()
             }
           );
           return;
@@ -146,7 +171,7 @@ bot.on('callback_query', async (query) => {
         homeworks.slice(0, 10).forEach((hw, index) => {
           message += `${index + 1}. 📌 ${hw.title}\n`;
           message += `   📄 ${hw.description}\n`;
-          message += `   📅 ${formatDate(hw.created_at)}\n\n`;
+          message += `   🕒 ${formatDate(hw.created_at)}\n\n`;
         });
 
         if (homeworks.length > 10) {
@@ -156,7 +181,7 @@ bot.on('callback_query', async (query) => {
         bot.editMessageText(message, {
           chat_id: chatId,
           message_id: messageId,
-          reply_markup: getBackMenuKeyboard()
+          reply_markup: admin ? getBackMenuKeyboard() : getPublicMenuKeyboard()
         });
       } catch (error) {
         console.error('Ошибка при получении списка:', error);
@@ -165,7 +190,7 @@ bot.on('callback_query', async (query) => {
           {
             chat_id: chatId,
             message_id: messageId,
-            reply_markup: getBackMenuKeyboard()
+            reply_markup: admin ? getBackMenuKeyboard() : getPublicMenuKeyboard()
           }
         );
       }
@@ -182,19 +207,23 @@ bot.on('message', async (msg) => {
   // Игнорируем команды
   if (!text || text.startsWith('/')) return;
 
-  // Проверка прав доступа
   if (!isAdmin(userId)) {
-    bot.sendMessage(chatId, '❌ У вас нет доступа к этому боту.');
+    bot.sendMessage(
+      chatId,
+      '❌ Добавление заданий доступно только администраторам.\n' +
+      '📚 Вам доступен только список заданий.',
+      { reply_markup: getPublicMenuKeyboard() }
+    );
     return;
   }
 
-  // Проверяем, есть ли состояние у пользователя
   const userState = userStates[userId];
 
   if (!userState) {
     // Если нет активного диалога - показываем меню
-    bot.sendMessage(chatId, 
-      '❓ Используйте кнопки меню для управления заданиями:',
+    bot.sendMessage(
+      chatId,
+      '✅ Используйте кнопки меню для управления заданиями:',
       { reply_markup: getMainMenuKeyboard() }
     );
     return;
@@ -207,7 +236,8 @@ bot.on('message', async (msg) => {
       userState.data.title = text.trim();
       userState.state = 'waiting_description';
 
-      bot.sendMessage(chatId,
+      bot.sendMessage(
+        chatId,
         `✅ Заголовок: "${text.trim()}"\n\n` +
         '👉 Шаг 2/2: Введите описание задания\n\n' +
         '💡 Например: "Решить задачи №1-10 на странице 45" или "Выучить параграф 3, ответить на вопросы"',
@@ -226,22 +256,24 @@ bot.on('message', async (msg) => {
         // Очищаем состояние
         delete userStates[userId];
 
-        bot.sendMessage(chatId,
+        bot.sendMessage(
+          chatId,
           '✅ Задание успешно добавлено!\n\n' +
-          `📝 ID: ${homework.id}\n` +
+          `📌 ID: ${homework.id}\n` +
           `📌 ${homework.title}\n` +
           `📄 ${homework.description}\n` +
-          `📅 ${formatDate(homework.created_at)}\n\n` +
+          `🕒 ${formatDate(homework.created_at)}\n\n` +
           '🌐 Задание появилось на сайте!',
           { reply_markup: getMainMenuKeyboard() }
         );
       } catch (error) {
         console.error('Ошибка при добавлении ДЗ:', error);
-        
+
         // Очищаем состояние
         delete userStates[userId];
 
-        bot.sendMessage(chatId, 
+        bot.sendMessage(
+          chatId,
           '❌ Ошибка при добавлении задания.\n\n' +
           `Детали: ${error.message}\n\n` +
           'Попробуйте ещё раз:',
@@ -251,7 +283,7 @@ bot.on('message', async (msg) => {
       break;
 
     default:
-      bot.sendMessage(chatId, '❓ Что-то пошло не так. Используйте /start');
+      bot.sendMessage(chatId, '❌ Что-то пошло не так. Используйте /start');
       delete userStates[userId];
   }
 });
