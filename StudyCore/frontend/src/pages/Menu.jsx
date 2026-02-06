@@ -1,9 +1,12 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import { Wrench } from "lucide-react";
 import { useAuth } from "../store/authStore";
 import "../styles/clean-menu.css";
 
 const Menu = () => {
   const user = useAuth((state) => state.user);
+  const isCreator = !!user?.role && String(user.role).trim().toLowerCase() === "creator";
 
   return (
     <div className="menu-page">
@@ -17,6 +20,20 @@ const Menu = () => {
             </p>
           )}
         </div>
+
+        {isCreator && (
+          <div className="quick-actions">
+            <Link to="/creator" className="quick-card">
+              <div className="quick-icon">
+                <Wrench size={22} />
+              </div>
+              <div className="quick-text">
+                <div className="quick-title">Creator Panel</div>
+                <div className="quick-subtitle">Управление пользователями</div>
+              </div>
+            </Link>
+          </div>
+        )}
 
         <div className="info-sections">
           <div className="info-card">

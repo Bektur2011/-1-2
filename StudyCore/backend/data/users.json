@@ -1,5 +1,5 @@
 [
-  { "id": 1, "login": "bb34_14", "password": "N3PqH8M6", "name": "Бектур", "role": "Moderator", "gender": "Male" },
+  { "id": 1, "login": "bb34_14", "password": "N3PqH8M6", "name": "Бектур", "role": "Creator", "gender": "Male" },
 
   { "id": 2, "login": "bb34_15", "password": "9XK4D7S2", "name": "Даткайым", "role": "Admin", "gender": "Female" },
   { "id": 3, "login": "bb34_16", "password": "F6RZ8C5M", "name": "Аяна", "role": "Student", "gender": "Female" },

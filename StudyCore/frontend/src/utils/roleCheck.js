@@ -4,12 +4,12 @@ export const checkRole = (user, requiredRole) => {
   const roleHierarchy = {
     student: 1,
     teacher: 2,
-    moderator: 3,
+    creator: 3,
     admin: 4
   };
 
-  const userRoleLevel = roleHierarchy[user.role] || 0;
-  const requiredRoleLevel = roleHierarchy[requiredRole] || 0;
+  const userRoleLevel = roleHierarchy[String(user.role).toLowerCase()] || 0;
+  const requiredRoleLevel = roleHierarchy[String(requiredRole).toLowerCase()] || 0;
 
   return userRoleLevel >= requiredRoleLevel;
 };
@@ -20,13 +20,13 @@ export const hasPermission = (user, permission) => {
 };
 
 export const isAdmin = (user) => {
-  return user && user.role === 'admin';
+  return user && String(user.role).toLowerCase() === 'admin';
 };
 
 export const isModerator = (user) => {
-  return user && (user.role === 'moderator' || user.role === 'admin');
+  return user && (String(user.role).toLowerCase() === 'creator' || String(user.role).toLowerCase() === 'admin');
 };
 
 export const isTeacher = (user) => {
-  return user && (user.role === 'teacher' || user.role === 'moderator' || user.role === 'admin');
+  return user && (String(user.role).toLowerCase() === 'teacher' || String(user.role).toLowerCase() === 'creator' || String(user.role).toLowerCase() === 'admin');
 };

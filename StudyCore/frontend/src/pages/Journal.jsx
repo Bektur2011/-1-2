@@ -26,8 +26,8 @@ const Journal = () => {
     switch (role) {
       case "Admin":
         return "role-admin";
-      case "Moderator":
-        return "role-moderator";
+      case "Creator":
+        return "role-creator";
       default:
         return "role-student";
     }

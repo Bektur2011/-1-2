@@ -1,10 +1,12 @@
-import React from "react";
+﻿import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, User, BookOpen, FileText, Bot } from "lucide-react";
+import { Home, User, BookOpen, FileText, Bot, Crown } from "lucide-react";
+import { useAuth } from "../store/authStore";
 import "../styles/clean-sidebar.css";
 
 const Sidebar = () => {
   const location = useLocation();
+  const user = useAuth((state) => state.user);
 
   const isActive = (path) => location.pathname === path;
 
@@ -55,6 +57,17 @@ const Sidebar = () => {
           <Bot className="nav-icon" />
           <span className="nav-link-tooltip">ИИ помощник</span>
         </Link>
+
+        {!!user?.role && String(user.role).trim().toLowerCase() === "creator" && (
+          <Link 
+            to="/creator" 
+            className={`nav-link ${isActive("/creator") ? "active" : ""}`}
+            title="Creator"
+          >
+            <Crown className="nav-icon" />
+            <span className="nav-link-tooltip">Creator</span>
+          </Link>
+        )}
       </nav>
     </div>
   );

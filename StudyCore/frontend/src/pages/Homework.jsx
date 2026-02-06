@@ -86,7 +86,7 @@ export default function Homework() {
     }
   };
 
-  const canAddHomework = user && (user.role === "Moderator" || user.role === "Admin");
+  const canAddHomework = user && (user.role === "Creator" || user.role === "Admin");
 
   if (loading) {
     return (

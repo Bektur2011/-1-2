@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timedelta, timezone
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from supabase import create_client, Client
@@ -197,6 +198,17 @@ def uploaded_file(filename):
     """Отдаёт загруженные файлы из локальной папки (запасной вариант)"""
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+def log_attendance(user):
+    try:
+        supabase.table('attendance').insert({
+            "user_id": user.get("id"),
+            "login": user.get("login"),
+            "name": user.get("name"),
+            "role": user.get("role")
+        }).execute()
+    except Exception as e:
+        print(f"ATTENDANCE LOG ERROR: {str(e)}")
+
 # --- API для логина по паролю ---
 @app.route("/api/login", methods=["POST"])
 def login():
@@ -289,6 +301,7 @@ def login():
         
         print(f"LOGIN SUCCESSFUL for user: {user['name']}")
         print("=" * 60)
+        log_attendance(user)
         return jsonify(response_data), 200
         
     except KeyError as e:
@@ -311,7 +324,11 @@ def get_users():
         print("=" * 60)
         print("FETCHING ALL USERS FROM SUPABASE")
         print("=" * 60)
-        response = supabase.table('users').select('*').execute()
+        limit = request.args.get("limit", "").strip()
+        query = supabase.table('users').select('*').order('id')
+        if limit.isdigit():
+            query = query.limit(int(limit))
+        response = query.execute()
         print(f"Users count: {len(response.data) if response.data else 0}")
         if response.data:
             print("Sample user passwords:")
@@ -324,6 +341,62 @@ def get_users():
     except Exception as e:
         print(f"ERROR fetching users: {str(e)}")
         print("=" * 60)
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/users/<int:user_id>", methods=["GET"])
+def get_user_by_id(user_id):
+    try:
+        response = supabase.table('users').select('*').eq('id', user_id).execute()
+        if not response.data:
+            return jsonify({"error": "User not found"}), 404
+        return jsonify(response.data[0]), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/users/<int:user_id>/role", methods=["PUT"])
+def update_user_role(user_id):
+    try:
+        data = request.json or {}
+        role = (data.get("role") or "").strip()
+        allowed_roles = {"Student", "Admin", "Creator"}
+        if role not in allowed_roles:
+            return jsonify({"error": "Invalid role"}), 400
+        response = supabase.table('users').update({"role": role}).eq('id', user_id).execute()
+        if not response.data:
+            return jsonify({"error": "User not found"}), 404
+        return jsonify(response.data[0]), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/attendance", methods=["GET"])
+def get_attendance():
+    try:
+        days_param = request.args.get("days", "14").strip()
+        days = int(days_param) if days_param.isdigit() else 14
+        days = max(1, min(days, 90))
+
+        start_date = (datetime.now(timezone.utc).date() - timedelta(days=days - 1))
+        response = supabase.table('attendance').select('created_at').gte('created_at', start_date.isoformat()).execute()
+
+        counts = {}
+        for item in (response.data or []):
+            created_at = item.get("created_at")
+            if not created_at:
+                continue
+            try:
+                dt = datetime.fromisoformat(created_at.replace("Z", "+00:00"))
+                day_key = dt.date().isoformat()
+                counts[day_key] = counts.get(day_key, 0) + 1
+            except Exception:
+                continue
+
+        result = []
+        for i in range(days):
+            day = (start_date + timedelta(days=i)).isoformat()
+            result.append({"date": day, "count": counts.get(day, 0)})
+
+        return jsonify(result), 200
+    except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 # --- API для загрузки данных из users.json в Supabase (ТОЛЬКО ДЛЯ ИНИЦИАЛИЗАЦИИ!) ---
