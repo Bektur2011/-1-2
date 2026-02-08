@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+﻿import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../store/authStore";
 import { sendMessageToAI, getAIStatus } from "../api/ai.api";
 import "../styles/new-ai.css";
@@ -120,10 +120,10 @@ const AI = () => {
             <div className="ai-empty-icon">🤖</div>
             <h3>AI чат не настроен</h3>
             <p>
-              Администратор должен добавить <strong>GEMINI_API_KEY</strong> в конфигурацию сервера.
+              Администратор должен добавить <strong>OPENAI_API_KEY</strong> в конфигурацию сервера.
               <br /><br />
               <a 
-                href="https://makersuite.google.com/app/apikey" 
+                href="https://platform.openai.com/api-keys" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 style={{ color: 'var(--neon-cyan)', textDecoration: 'underline' }}
@@ -147,7 +147,7 @@ const AI = () => {
         <h2>🤖 AI Помощник StudyCore</h2>
         <div className="ai-status">
           <span className="status-dot"></span>
-          Онлайн • Gemini 2.0 Flash
+          Онлайн • OpenAI
         </div>
       </div>
 

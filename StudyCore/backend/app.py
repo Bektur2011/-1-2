@@ -1,4 +1,4 @@
-import os
+﻿import os
 from datetime import datetime, timedelta, timezone
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
@@ -6,7 +6,7 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 import uuid
-import google.generativeai as genai
+from openai import OpenAI
 
 # Load environment variables
 load_dotenv()
@@ -43,43 +43,11 @@ if not SUPABASE_URL.startswith("https://") or not SUPABASE_URL.endswith(".supaba
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# Gemini AI setup
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-if GEMINI_API_KEY and GEMINI_API_KEY != "your_gemini_api_key_here":
+# OpenAI setup
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+if OPENAI_API_KEY and OPENAI_API_KEY != "your_openai_api_key_here":
     try:
-        # Инициализируем genai
-        genai.configure(api_key=GEMINI_API_KEY)
-        
-        # Получаем список доступных моделей
-        print("📋 Fetching available Gemini models...")
-        available_models = []
-        try:
-            for m in genai.list_models():
-                if 'generateContent' in m.supported_generation_methods:
-                    available_models.append(m.name)
-                    print(f"  ✓ {m.name}")
-        except Exception as list_error:
-            print(f"⚠️  Could not list models: {list_error}")
-        
-        # Выбираем первую доступную модель gemini
-        model_name = None
-        if available_models:
-            # Ищем gemini-1.5 или gemini-pro
-            for m in available_models:
-                if 'gemini-1.5' in m or 'gemini-pro' in m:
-                    model_name = m
-                    break
-            # Если не нашли, берем первую
-            if not model_name:
-                model_name = available_models[0]
-        
-        if not model_name:
-            # Если не смогли получить список, используем дефолтное имя
-            model_name = 'models/gemini-1.5-flash'
-            print(f"⚠️  Using default model: {model_name}")
-        else:
-            print(f"✅ Selected model: {model_name}")
-        
         # Системный промпт для AI помощника
         SYSTEM_INSTRUCTION = """Ты - AI помощник для образовательной платформы StudyCore. 
 Твоя задача - помогать студентам с учебой: отвечать на вопросы по темам, 
@@ -96,18 +64,17 @@ if GEMINI_API_KEY and GEMINI_API_KEY != "your_gemini_api_key_here":
 Помни: ты здесь чтобы помочь учиться, а не давать готовые ответы!"""
         
         ai_model = {
-            'model': genai.GenerativeModel(
-                model_name,
-                system_instruction=SYSTEM_INSTRUCTION
-            )
+            'client': OpenAI(api_key=OPENAI_API_KEY),
+            'model': OPENAI_MODEL,
+            'system_instruction': SYSTEM_INSTRUCTION
         }
-        print("✅ Gemini AI initialized successfully (google.generativeai)")
+        print("✅ OpenAI initialized successfully")
     except Exception as e:
-        print(f"❌ Error initializing Gemini AI: {str(e)}")
+        print(f"❌ Error initializing OpenAI: {str(e)}")
         ai_model = None
 else:
     ai_model = None
-    print("⚠️  WARNING: GEMINI_API_KEY not configured. AI chat will be disabled.")
+    print("⚠️  WARNING: OPENAI_API_KEY not configured. AI chat will be disabled.")
 
 # --- Вспомогательные функции для файлов ---
 def allowed_file(filename):
@@ -613,11 +580,11 @@ def ai_chat():
         
         # Проверяем что AI модель настроена
         if not ai_model:
-            print("ERROR: Gemini AI not configured")
+            print("ERROR: OpenAI not configured")
             print("=" * 60)
             return jsonify({
                 "error": "AI чат не настроен",
-                "hint": "Администратор должен добавить GEMINI_API_KEY в .env файл. Получить ключ можно на https://makersuite.google.com/app/apikey"
+                "hint": "Администратор должен добавить OPENAI_API_KEY в .env файл. Получить ключ можно на https://platform.openai.com/api-keys"
             }), 503
         
         # Получаем данные из запроса
@@ -639,22 +606,24 @@ def ai_chat():
             return jsonify({"error": "Сообщение не может быть пустым"}), 400
         
         # Создаем чат с системной инструкцией
-        history = []
+        messages = [
+            {"role": "system", "content": ai_model["system_instruction"]}
+        ]
         for msg in chat_history:
-            role = "user" if msg.get("role") == "user" else "model"
-            history.append({
+            role = "user" if msg.get("role") == "user" else "assistant"
+            messages.append({
                 "role": role,
-                "parts": [msg.get("content", "")]
+                "content": msg.get("content", "")
             })
+        messages.append({"role": "user", "content": user_message})
         
-        # РЎРѕР·РґР°РµРј С‡Р°С‚ СЃ СѓС‡С‘С‚РѕРј РёСЃС‚РѕСЂРёРё
-        chat = ai_model['model'].start_chat(history=history)
-        
-        # РћС‚РїСЂР°РІР»СЏРµРј Р·Р°РїСЂРѕСЃ РІ Gemini
-        print("Sending message to Gemini...")
-        response = chat.send_message(user_message)        
-        ai_response = response.text
-        
+        # Отправляем запрос в OpenAI
+        print("Sending message to OpenAI...")
+        response = ai_model["client"].responses.create(
+            model=ai_model["model"],
+            input=messages
+        )
+        ai_response = response.output_text        
         print(f"AI RESPONSE LENGTH: {len(ai_response)} characters")
         print(f"AI RESPONSE PREVIEW: {ai_response[:100]}...")
         print("=" * 60)
@@ -674,7 +643,7 @@ def ai_chat():
         if "API_KEY" in error_str.upper() or "INVALID" in error_str.upper():
             return jsonify({
                 "error": "Неверный API ключ",
-                "hint": "Проверьте GEMINI_API_KEY в .env файле"
+                "hint": "Проверьте OPENAI_API_KEY в .env файле"
             }), 500
         elif "QUOTA" in error_str.upper() or "LIMIT" in error_str.upper():
             return jsonify({
@@ -696,14 +665,14 @@ def ai_status():
     if ai_model:
         return jsonify({
             "available": True,
-            "model": "Gemini 2.0 Flash",
+            "model": ai_model.get("model", "openai"),
             "message": "AI чат готов к работе ✨"
         }), 200
     else:
         return jsonify({
             "available": False,
-            "message": "AI чат не настроен. Добавьте GEMINI_API_KEY в .env",
-            "hint": "Получить ключ: https://makersuite.google.com/app/apikey"
+            "message": "AI чат не настроен. Добавьте OPENAI_API_KEY в .env",
+            "hint": "Получить ключ: https://platform.openai.com/api-keys"
         }), 503
 
 # --- Раздача фронтенда ---

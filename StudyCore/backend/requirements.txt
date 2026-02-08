@@ -3,4 +3,4 @@ Flask-CORS==3.0.10
 supabase>=2.27.2
 python-dotenv==1.0.0
 websockets>=14.0
-google-generativeai>=0.3.0
+openai>=1.0.0
