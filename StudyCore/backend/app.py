@@ -6,7 +6,7 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 import uuid
-from google import genai
+import google.generativeai as genai
 
 # Load environment variables
 load_dotenv()
@@ -47,8 +47,38 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if GEMINI_API_KEY and GEMINI_API_KEY != "your_gemini_api_key_here":
     try:
-        # Инициализируем клиент
-        client = genai.Client(api_key=GEMINI_API_KEY)
+        # Инициализируем genai
+        genai.configure(api_key=GEMINI_API_KEY)
+        
+        # Получаем список доступных моделей
+        print("📋 Fetching available Gemini models...")
+        available_models = []
+        try:
+            for m in genai.list_models():
+                if 'generateContent' in m.supported_generation_methods:
+                    available_models.append(m.name)
+                    print(f"  ✓ {m.name}")
+        except Exception as list_error:
+            print(f"⚠️  Could not list models: {list_error}")
+        
+        # Выбираем первую доступную модель gemini
+        model_name = None
+        if available_models:
+            # Ищем gemini-1.5 или gemini-pro
+            for m in available_models:
+                if 'gemini-1.5' in m or 'gemini-pro' in m:
+                    model_name = m
+                    break
+            # Если не нашли, берем первую
+            if not model_name:
+                model_name = available_models[0]
+        
+        if not model_name:
+            # Если не смогли получить список, используем дефолтное имя
+            model_name = 'models/gemini-1.5-flash'
+            print(f"⚠️  Using default model: {model_name}")
+        else:
+            print(f"✅ Selected model: {model_name}")
         
         # Системный промпт для AI помощника
         SYSTEM_INSTRUCTION = """Ты - AI помощник для образовательной платформы StudyCore. 
@@ -66,10 +96,12 @@ if GEMINI_API_KEY and GEMINI_API_KEY != "your_gemini_api_key_here":
 Помни: ты здесь чтобы помочь учиться, а не давать готовые ответы!"""
         
         ai_model = {
-            'client': client,
-            'system_instruction': SYSTEM_INSTRUCTION
+            'model': genai.GenerativeModel(
+                model_name,
+                system_instruction=SYSTEM_INSTRUCTION
+            )
         }
-        print("✅ Gemini AI initialized successfully (google.genai)")
+        print("✅ Gemini AI initialized successfully (google.generativeai)")
     except Exception as e:
         print(f"❌ Error initializing Gemini AI: {str(e)}")
         ai_model = None
@@ -606,46 +638,21 @@ def ai_chat():
             print("=" * 60)
             return jsonify({"error": "Сообщение не может быть пустым"}), 400
         
-        # Формируем сообщения для Gemini
-        contents = []
-        
-        # Добавляем системную инструкцию как первое сообщение
-        contents.append({
-            "role": "user",
-            "parts": [{"text": ai_model['system_instruction']}]
-        })
-        contents.append({
-            "role": "model",
-            "parts": [{"text": "Понял! Я буду помогать студентам с учебой по этим правилам."}]
-        })
-        
-        # Добавляем историю чата
+        # Создаем чат с системной инструкцией
+        history = []
         for msg in chat_history:
-            role = "user" if msg["role"] == "user" else "model"
-            contents.append({
+            role = "user" if msg.get("role") == "user" else "model"
+            history.append({
                 "role": role,
-                "parts": [{"text": msg["content"]}]
+                "parts": [msg.get("content", "")]
             })
         
-        # Добавляем текущее сообщение пользователя
-        contents.append({
-            "role": "user",
-            "parts": [{"text": user_message}]
-        })
+        # РЎРѕР·РґР°РµРј С‡Р°С‚ СЃ СѓС‡С‘С‚РѕРј РёСЃС‚РѕСЂРёРё
+        chat = ai_model['model'].start_chat(history=history)
         
-        # Отправляем запрос в Gemini
+        # РћС‚РїСЂР°РІР»СЏРµРј Р·Р°РїСЂРѕСЃ РІ Gemini
         print("Sending message to Gemini...")
-        response = ai_model['client'].models.generate_content(
-            model='gemini-2.0-flash-exp',
-            contents=contents,
-            config={
-                "temperature": 0.7,
-                "top_p": 0.95,
-                "top_k": 40,
-                "max_output_tokens": 2048,
-            }
-        )
-        
+        response = chat.send_message(user_message)        
         ai_response = response.text
         
         print(f"AI RESPONSE LENGTH: {len(ai_response)} characters")
