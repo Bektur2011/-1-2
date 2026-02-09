@@ -1,6 +1,6 @@
 ﻿import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Home, User, BookOpen, FileText, Bot, Crown } from "lucide-react";
+import { Home, User, BookOpen, FileText, Crown } from "lucide-react";
 import { useAuth } from "../store/authStore";
 import "../styles/clean-sidebar.css";
 
@@ -49,15 +49,6 @@ const Sidebar = () => {
           <span className="nav-link-tooltip">Журнал</span>
         </Link>
         
-        <Link 
-          to="/ai" 
-          className={`nav-link ${isActive("/ai") ? "active" : ""}`}
-          title="ИИ помощник"
-        >
-          <Bot className="nav-icon" />
-          <span className="nav-link-tooltip">ИИ помощник</span>
-        </Link>
-
         {!!user?.role && String(user.role).trim().toLowerCase() === "creator" && (
           <Link 
             to="/creator" 

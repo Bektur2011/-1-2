@@ -5,7 +5,6 @@ import Menu from "../pages/Menu.jsx";
 import Profile from "../pages/Profile.jsx";
 import Homework from "../pages/Homework.jsx";
 import Journal from "../pages/Journal.jsx";
-import AI from "../pages/AI.jsx";
 import Creator from "../pages/Creator.jsx";
 import Sidebar from "../components/Sidebar.jsx";
 import ProtectedRoute from "../components/ProtectedRoute.jsx";
@@ -27,7 +26,6 @@ const Router = () => {
         <Route path="/profile" element={<><Sidebar /><Profile /></>} />
         <Route path="/homework" element={<><Sidebar /><Homework /></>} />
         <Route path="/journal" element={<><Sidebar /><Journal /></>} />
-        <Route path="/ai" element={<><Sidebar /><AI /></>} />
         <Route
           path="/creator"
           element={
