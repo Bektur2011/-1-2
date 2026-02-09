@@ -64,7 +64,7 @@ if OPENAI_API_KEY and OPENAI_API_KEY != "your_openai_api_key_here":
 Помни: ты здесь чтобы помочь учиться, а не давать готовые ответы!"""
         
         ai_model = {
-            'client': OpenAI(api_key=OPENAI_API_KEY),
+            'client': OpenAI(api_key=OPENAI_API_KEY, timeout=30.0),
             'model': OPENAI_MODEL,
             'system_instruction': SYSTEM_INSTRUCTION
         }
@@ -640,16 +640,23 @@ def ai_chat():
         print("=" * 60)
         
         # Проверяем специфичные ошибки
-        if "API_KEY" in error_str.upper() or "INVALID" in error_str.upper():
-            return jsonify({
-                "error": "Неверный API ключ",
-                "hint": "Проверьте OPENAI_API_KEY в .env файле"
-            }), 500
-        elif "QUOTA" in error_str.upper() or "LIMIT" in error_str.upper():
+        status_code = getattr(e, "status_code", None)
+        error_upper = error_str.upper()
+        if status_code == 429 or "RATE LIMIT" in error_upper or "QUOTA" in error_upper or "LIMIT" in error_upper:
             return jsonify({
                 "error": "Превышен лимит запросов",
                 "hint": "Подождите немного и попробуйте снова"
             }), 429
+        if status_code == 408 or "TIMEOUT" in error_upper:
+            return jsonify({
+                "error": "Истекло время ожидания ответа",
+                "hint": "Повторите запрос чуть позже"
+            }), 504
+        if "API_KEY" in error_upper or "INVALID" in error_upper:
+            return jsonify({
+                "error": "Неверный API ключ",
+                "hint": "Проверьте OPENAI_API_KEY в .env файле"
+            }), 500
         else:
             return jsonify({
                 "error": "Ошибка AI сервиса",
