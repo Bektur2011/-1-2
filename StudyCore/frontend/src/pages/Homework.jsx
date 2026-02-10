@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+﻿import { useState, useEffect } from "react";
 import { useAuth } from "../store/authStore";
 import { getHomework, addHomework, deleteHomework } from "../api/homework.api";
 import "../styles/clean-homework.css";
 
 export default function Homework() {
-  const user = useAuth((state) => state.user);
+  const profile = useAuth((state) => state.profile);
   const [list, setList] = useState([]);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
@@ -20,12 +20,6 @@ export default function Homework() {
       setList(response.data);
     } catch (err) {
       console.error("Ошибка загрузки ДЗ:", err);
-      
-      if (err.response?.status !== 404) {
-        const errorMessage = err.response?.data?.error || err.message || "Не удалось загрузить задания";
-        console.error("Детали ошибки:", errorMessage);
-      }
-      
       setList([]);
     } finally {
       setLoading(false);
@@ -37,7 +31,6 @@ export default function Homework() {
       alert("Заполните название и описание!");
       return;
     }
-    
     try {
       const response = await addHomework(title, desc);
       setList([...list, response.data]);
@@ -46,29 +39,7 @@ export default function Homework() {
       alert("✅ Задание успешно добавлено!");
     } catch (err) {
       console.error("Ошибка при добавлении ДЗ:", err);
-      console.error("Детали ошибки:", err.response?.data);
-      
-      const errorData = err.response?.data || {};
-      const errorMessage = errorData.error || err.message || "Неизвестная ошибка";
-      const errorHint = errorData.hint || "";
-      const fixFile = errorData.fix_file || "";
-      
-      let alertMessage = `❌ ${errorMessage}`;
-      
-      if (errorHint) {
-        alertMessage += `\n\n💡 Решение:\n${errorHint}`;
-      }
-      
-      if (fixFile) {
-        alertMessage += `\n\n📄 Инструкция: ${fixFile}`;
-      }
-      
-      if (errorData.details) {
-        console.error("Техническая ошибка:", errorData.details);
-        alertMessage += `\n\n🔧 Для разработчика: смотрите консоль (F12)`;
-      }
-      
-      alert(alertMessage);
+      alert("Ошибка при добавлении задания");
     }
   };
 
@@ -76,7 +47,6 @@ export default function Homework() {
     if (!window.confirm("Вы уверены, что хотите удалить это задание?")) {
       return;
     }
-
     try {
       await deleteHomework(id);
       setList(list.filter((h) => h.id !== id));
@@ -86,7 +56,7 @@ export default function Homework() {
     }
   };
 
-  const canAddHomework = user && (user.role === "Creator" || user.role === "Admin");
+  const canAddHomework = profile && (profile.role === "Creator" || profile.role === "Admin");
 
   if (loading) {
     return (
@@ -128,10 +98,7 @@ export default function Homework() {
                 />
               </div>
             </div>
-            <button 
-              className="btn-add" 
-              onClick={add}
-            >
+            <button className="btn-add" onClick={add}>
               ➕ Добавить задание
             </button>
           </div>
@@ -143,13 +110,11 @@ export default function Homework() {
           <div className="homework-list">
             {list.map((h) => (
               <div key={h.id} className="homework-item">
-                <div className="homework-item-content">
-                  <h3>{h.title}</h3>
-                  <p>{h.description}</p>
-                </div>
+                <div className="homework-title">{h.title}</div>
+                <div className="homework-desc">{h.description}</div>
                 {canAddHomework && (
-                  <button className="btn-delete" onClick={() => remove(h.id)} title="Удалить задание">
-                    🗑️ Удалить
+                  <button className="btn-delete" onClick={() => remove(h.id)}>
+                    Удалить
                   </button>
                 )}
               </div>

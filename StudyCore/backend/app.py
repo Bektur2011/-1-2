@@ -320,39 +320,26 @@ def login():
 @app.route("/api/users", methods=["GET"])
 def get_users():
     try:
-        print("=" * 60)
-        print("FETCHING ALL USERS FROM SUPABASE")
-        print("=" * 60)
         limit = request.args.get("limit", "").strip()
-        query = supabase.table('users').select('*').order('id')
+        query = supabase.table('profiles').select('id, username, role, created_at').order('created_at', desc=True)
         if limit.isdigit():
             query = query.limit(int(limit))
         response = query.execute()
-        print(f"Users count: {len(response.data) if response.data else 0}")
-        if response.data:
-            print("Sample user passwords:")
-            for user in response.data[:3]:  # Print first 3 users
-                print(f"  - {user.get('login')}: '{user.get('password')}'")
-        else:
-            print("WARNING: No users found in Supabase table!")
-        print("=" * 60)
         return jsonify(response.data)
     except Exception as e:
-        print(f"ERROR fetching users: {str(e)}")
-        print("=" * 60)
         return jsonify({"error": str(e)}), 500
 
-@app.route("/api/users/<int:user_id>", methods=["GET"])
+@app.route("/api/users/<user_id>", methods=["GET"])
 def get_user_by_id(user_id):
     try:
-        response = supabase.table('users').select('*').eq('id', user_id).execute()
+        response = supabase.table('profiles').select('id, username, role, created_at').eq('id', user_id).execute()
         if not response.data:
             return jsonify({"error": "User not found"}), 404
         return jsonify(response.data[0]), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route("/api/users/<int:user_id>/role", methods=["PUT"])
+@app.route("/api/users/<user_id>/role", methods=["PUT"])
 def update_user_role(user_id):
     try:
         data = request.json or {}
@@ -360,7 +347,7 @@ def update_user_role(user_id):
         allowed_roles = {"Student", "Admin", "Creator"}
         if role not in allowed_roles:
             return jsonify({"error": "Invalid role"}), 400
-        response = supabase.table('users').update({"role": role}).eq('id', user_id).execute()
+        response = supabase.table('profiles').update({"role": role}).eq('id', user_id).execute()
         if not response.data:
             return jsonify({"error": "User not found"}), 404
         return jsonify(response.data[0]), 200
@@ -395,6 +382,25 @@ def get_attendance():
             result.append({"date": day, "count": counts.get(day, 0)})
 
         return jsonify(result), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/attendance/log", methods=["POST"])
+def log_attendance_api():
+    try:
+        data = request.json or {}
+        user_id = data.get("user_id")
+        username = data.get("username")
+        role = data.get("role")
+        if not user_id:
+            return jsonify({"error": "user_id is required"}), 400
+        response = supabase.table('attendance').insert({
+            "user_id": user_id,
+            "login": data.get("login"),
+            "name": username,
+            "role": role
+        }).execute()
+        return jsonify(response.data[0] if response.data else {}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

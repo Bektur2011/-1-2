@@ -12,6 +12,8 @@ import { useAuth } from "../store/authStore";
 
 const Router = () => {
   const user = useAuth((state) => state.user);
+  const profile = useAuth((state) => state.profile);
+  const loading = useAuth((state) => state.loading);
 
   return (
     <BrowserRouter>
@@ -19,17 +21,17 @@ const Router = () => {
         {/* Root path redirects to login */}
         <Route path="/" element={<Navigate to="/login" replace />} />
         
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={user ? <Navigate to="/menu" replace /> : <Login />} />
         
         {/* Routes with Sidebar */}
-        <Route path="/menu" element={<><Sidebar /><Menu /></>} />
-        <Route path="/profile" element={<><Sidebar /><Profile /></>} />
-        <Route path="/homework" element={<><Sidebar /><Homework /></>} />
-        <Route path="/journal" element={<><Sidebar /><Journal /></>} />
+        <Route path="/menu" element={user ? <><Sidebar /><Menu /></> : <Navigate to="/login" replace />} />
+        <Route path="/profile" element={user ? <><Sidebar /><Profile /></> : <Navigate to="/login" replace />} />
+        <Route path="/homework" element={user ? <><Sidebar /><Homework /></> : <Navigate to="/login" replace />} />
+        <Route path="/journal" element={user ? <><Sidebar /><Journal /></> : <Navigate to="/login" replace />} />
         <Route
           path="/creator"
           element={
-            <ProtectedRoute allowedRoles={["Creator"]} user={user}>
+            <ProtectedRoute allowedRoles={["Creator"]} profile={profile}>
               <><Sidebar /><Creator /></>
             </ProtectedRoute>
           }

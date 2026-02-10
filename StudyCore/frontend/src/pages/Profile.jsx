@@ -1,15 +1,17 @@
-import React from "react";
-import { useAuth } from "../store/authStore";
+﻿import React from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../lib/supabase";
+import { useAuth } from "../store/authStore";
 import "../styles/clean-profile.css";
 
 const Profile = () => {
-  const user = useAuth((state) => state.user);
-  const logout = useAuth((state) => state.logout);
+  const profile = useAuth((state) => state.profile);
+  const clearAuth = useAuth((state) => state.clearAuth);
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    clearAuth();
     navigate("/login");
   };
 
@@ -21,27 +23,15 @@ const Profile = () => {
         </div>
 
         <div className="profile-card">
-          <div className="profile-avatar">
-            {user?.gender === "Female" ? "👩" : "👨"}
-          </div>
+          <div className="profile-avatar">👤</div>
           <div className="profile-info">
-            {user ? (
+            {profile ? (
               <>
-                <h3>{user.name}</h3>
+                <h3>{profile.username || "Пользователь"}</h3>
                 <div className="profile-row">
                   <div className="profile-field">
                     <div className="profile-field-label">Роль</div>
-                    <div className="profile-field-value">{user.role}</div>
-                  </div>
-                  <div className="profile-field">
-                    <div className="profile-field-label">Пол</div>
-                    <div className="profile-field-value">
-                      {user.gender === "Female" ? "Женский" : "Мужской"}
-                    </div>
-                  </div>
-                  <div className="profile-field">
-                    <div className="profile-field-label">Статус</div>
-                    <div className="profile-field-value">✓ Активен</div>
+                    <div className="profile-field-value">{profile.role}</div>
                   </div>
                 </div>
                 <button className="btn-logout" onClick={handleLogout}>

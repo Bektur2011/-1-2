@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import { getUsers, getUserById, updateUserRole } from "../api/users.api";
 import { getAttendance } from "../api/attendance.api";
 import "../styles/clean-creator.css";
@@ -45,7 +45,7 @@ const Creator = () => {
   const handleSearch = async () => {
     setSearchError("");
     setSearchResult(null);
-    const id = Number(searchId);
+    const id = searchId.trim();
     if (!id) {
       setSearchError("Введите корректный ID");
       return;
@@ -103,7 +103,7 @@ const Creator = () => {
             <h3>🔎 Поиск пользователя по ID</h3>
             <div className="search-row">
               <input
-                type="number"
+                type="text"
                 placeholder="Введите ID"
                 value={searchId}
                 onChange={(e) => setSearchId(e.target.value)}
@@ -114,7 +114,7 @@ const Creator = () => {
             {searchResult && (
               <div className="user-row">
                 <div>
-                  <div className="user-name">{searchResult.name}</div>
+                  <div className="user-name">{searchResult.username}</div>
                   <div className="user-meta">ID: {searchResult.id} • {searchResult.role}</div>
                 </div>
                 <div className="user-actions">
@@ -155,7 +155,7 @@ const Creator = () => {
               {users.map((u) => (
                 <div key={u.id} className="user-row">
                   <div>
-                    <div className="user-name">{u.name}</div>
+                    <div className="user-name">{u.username}</div>
                     <div className="user-meta">ID: {u.id} • {u.role}</div>
                   </div>
                   <div className="user-actions">

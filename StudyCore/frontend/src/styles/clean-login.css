@@ -1,4 +1,4 @@
-/* Чистый минималистичный дизайн страницы входа */
+﻿/* Clean login/registration styles */
 
 .login-page {
   min-height: 100vh;
@@ -13,7 +13,7 @@
   background: var(--white);
   border: 1px solid var(--gray-200);
   border-radius: var(--radius-xl);
-  padding: 3rem 2rem;
+  padding: 2.5rem 2rem;
   box-shadow: var(--shadow-xl);
   max-width: 420px;
   width: 100%;
@@ -21,26 +21,35 @@
 }
 
 .login-icon {
-  font-size: 3rem;
-  margin-bottom: 1.5rem;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
   display: block;
 }
 
 .login-card h2 {
-  font-size: 1.75rem;
+  font-size: 1.6rem;
   font-weight: 700;
   color: var(--gray-900);
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .input-wrapper {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray-400);
 }
 
 .login-input {
   width: 100%;
-  padding: 0.875rem 1rem;
-  font-size: 16px; /* Предотвращает зум на iOS */
+  padding: 0.875rem 1rem 0.875rem 2.5rem;
+  font-size: 16px;
   border: 1px solid var(--gray-300);
   border-radius: var(--radius);
   transition: var(--transition);
@@ -83,36 +92,26 @@
   box-shadow: var(--shadow-lg);
 }
 
-.login-button:active:not(:disabled) {
-  transform: translateY(0);
-}
-
 .login-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.login-button.loading {
-  opacity: 0.8;
+.login-button.google {
+  margin-top: 0.75rem;
+  background: var(--white);
+  color: var(--gray-900);
+  border: 1px solid var(--gray-300);
 }
 
-.spinner {
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: var(--white);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-.button-icon {
-  font-size: 1.25rem;
-  line-height: 1;
+.login-button.google:hover:not(:disabled) {
+  background: var(--gray-50);
+  border-color: var(--gray-400);
 }
 
 .login-footer {
-  margin-top: 1.5rem;
-  padding-top: 1.5rem;
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
   border-top: 1px solid var(--gray-200);
 }
 
@@ -122,98 +121,37 @@
   line-height: 1.5;
 }
 
-/* Welcome banner (удаляется после анимации) */
-.welcome-banner {
-  position: fixed;
-  top: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--white);
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem 2rem;
-  box-shadow: var(--shadow-xl);
-  text-align: center;
-  z-index: 1000;
-  animation: fadeInDown 0.6s ease-out, fadeOut 0.4s ease-out 2.6s forwards;
-}
-
-.welcome-banner h1 {
-  font-size: 2rem;
-  font-weight: 700;
+.link-button {
+  background: transparent;
+  border: none;
   color: var(--primary);
-  margin-bottom: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
 }
 
-.welcome-banner p {
-  color: var(--gray-600);
-  font-size: 0.9375rem;
+.link-button:hover {
+  text-decoration: underline;
 }
 
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: var(--shadow-lg);
 }
 
-@keyframes fadeOut {
-  to {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-20px);
-  }
-}
-
-/* Адаптивность для мобильных */
-@media (max-width: 480px) {
-  .login-page {
-    padding: 1rem 0.75rem;
-  }
-  
-  .login-card {
-    padding: 2rem 1.5rem;
-  }
-  
-  .login-icon {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-  }
-  
-  .login-card h2 {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-  
-  .login-input,
-  .login-button {
-    font-size: 16px; /* Предотвращает зум на iOS */
-  }
-  
-  .welcome-banner {
-    top: 1rem;
-    left: 1rem;
-    right: 1rem;
-    transform: none;
-    padding: 1rem 1.5rem;
-  }
-  
-  .welcome-banner h1 {
-    font-size: 1.5rem;
-  }
-  
-  .welcome-banner p {
-    font-size: 0.875rem;
-  }
-}
-
-/* iOS Safe Area */
-@supports (padding: max(0px)) {
-  .login-page {
-    padding-top: max(2rem, env(safe-area-inset-top));
-    padding-bottom: max(2rem, env(safe-area-inset-bottom));
-  }
+.toast-close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
 }

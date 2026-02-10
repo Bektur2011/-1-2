@@ -6,7 +6,7 @@ import "../styles/clean-sidebar.css";
 
 const Sidebar = () => {
   const location = useLocation();
-  const user = useAuth((state) => state.user);
+  const profile = useAuth((state) => state.profile);
 
   const isActive = (path) => location.pathname === path;
 
@@ -49,7 +49,7 @@ const Sidebar = () => {
           <span className="nav-link-tooltip">Журнал</span>
         </Link>
         
-        {!!user?.role && String(user.role).trim().toLowerCase() === "creator" && (
+        {!!profile?.role && String(profile.role).trim().toLowerCase() === "creator" && (
           <Link 
             to="/creator" 
             className={`nav-link ${isActive("/creator") ? "active" : ""}`}

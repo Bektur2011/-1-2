@@ -2,6 +2,8 @@ import { create } from "zustand";
 
 export const useAuth = create((set) => ({
   user: null,
-  login: (user) => set({ user }),
-  logout: () => set({ user: null })
+  profile: null,
+  loading: true,
+  setAuth: (user, profile) => set({ user, profile, loading: false }),
+  clearAuth: () => set({ user: null, profile: null, loading: false })
 }));
